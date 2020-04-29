@@ -83,8 +83,13 @@ Your user should be a member of the following groups:
 
 Your `.profile` should include entries for `DEBFULLNAME` and `DEBEMAIL`:
 
-    $ export DEBFULLNAME="Your Full Name"
-    $ export DEBEMAIL=your@email.com
+    export DEBFULLNAME="Your Full Name"
+    export DEBEMAIL=your@email.com
+
+You can also set the `DEBSIGN` variables:
+
+    export DEBSIGN_PROGRAM="/usr/bin/gpg2"
+    export DEBSIGN_KEYID="0xMYKEYHASH"
 
 A fix for "clear-sign failed: Inappropriate ioctl for device":
 
