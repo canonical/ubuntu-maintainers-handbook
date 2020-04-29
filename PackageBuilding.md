@@ -68,6 +68,16 @@ From within the package repository:
 
 Other flags are similar to `git ubuntu build --source`.
 
+### Using sbuild
+
+Assuming you have configured `sbuild` properly, you can use it to build the binary package:
+
+    $ sbuild
+
+Because of https://bugs.launchpad.net/launchpad/+bug/1699763, it is a good idea to disable the inclusion of `.buildinfo` files in the `*_source.changes` file:
+
+    $ sbuild --debbuildopts='--buildinfo-option=-O'
+
 
 ### As a PPA in Launchpad
 
