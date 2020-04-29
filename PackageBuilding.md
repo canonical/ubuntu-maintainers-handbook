@@ -42,6 +42,10 @@ From within the package repository:
       lxc exec builder -- tar cf - --exclude=package -C /root/build . | tar xf - -C .. &&
     $ lxc delete -f builder
 
+Even though the recommended way to build a source package is to use a pristine environment inside an LXD container, you can also use `dpkg-buildpackage`'s `--no-check-builddeps` option and build the source package locally:
+
+    $ dpkg-buildpackage -S -d
+
 
 ### Signing the Changes File
 
