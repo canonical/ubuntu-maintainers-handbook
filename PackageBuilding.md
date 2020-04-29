@@ -4,6 +4,15 @@ Package Building
 There are multiple ways to build a package, each with advantages and disadvantages. Which one you choose will depend on your circumstances.
 
 
+Downloading the orig tarball (optional)
+---------------------------------------
+
+If you intend to use more manual methods like `sbuild` or `dpkg-buildpackage` directly, you will probably have to download the orig tarball first.  You can do so by using:
+
+    $ git ubuntu export-orig
+
+It will try to use the `pristine-tar` branch to generate the tarball (and will likely fail), and then it will fallback to downloading the tarball directly from Launchpad.  When it finishes, you should be able to see a link to the orig tarball at `../`.
+
 
 Building Source Packages
 ------------------------
