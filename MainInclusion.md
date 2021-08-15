@@ -14,10 +14,10 @@ On the Ubuntu Server Team, we use git to maintain the list of packages for which
 
 The use of git, instead of just adding and removing the subscriptions in Launchpad, allows us to:
 
- * Avoid accidental additions and deletions
- * Maintain records about what we did and didn't support in the past
- * Note our rationale when we make changes
- * Examine the past when considering future changes
+ * Avoid accidental additions and deletions.
+ * Maintain records about what we did and didn't support in the past.
+ * Note our rationale when we make changes.
+ * Examine the past when considering future changes.
 
 ### Process for making changes to the Ubuntu Server Team package subscription list
 
@@ -45,9 +45,9 @@ In the future, we might be able to enrich the subscription data further, such as
 
 We use `~canonical-server` as the owner for this repository because:
 
- * We have automation driven from the data, which means we must be able to trust the input
- * `~ubuntu-server`, which would be the logical place to keep data about `~ubuntu-server` subscriptions, has an open membership policy, which means anybody on the Internet might be able to subvert our script if we had stored it there
- * Ultimately, Canonical have the authority in Ubuntu to decide what is and isn't in main, so restricting changes to Canonical staff makes sense
- * We don't perceive a need to restrict maintenance to only uploaders
+ * We have automation driven from the data, which means we must be able to trust the input.
+ * `~ubuntu-server`, which would be the logical place to keep data about `~ubuntu-server` subscriptions, has an open membership policy, which means anybody on the Internet might be able to subvert our script if we had stored it there.
+ * Ultimately, Canonical have the authority in Ubuntu to decide what is and isn't in main, so restricting changes to Canonical staff makes sense.
+ * We don't perceive a need to restrict maintenance to only uploaders.
 
 Note that this repository is public because the set of packages in main is public. Rationale, however, sometimes might contain private information. For example, we might decide to put a package into main on the basis of customer demand, but specific customer identities should generally remain private. When writing git commit messages, you should avoid including private information. However, references to internal resources such as ticket numbers are acceptable in git commit messages in this repository (unlike most other Ubuntu processes). This is because main inclusion decisions in Ubuntu are owned and driven by Canonical specifically, unlike most other development processes in Ubuntu.
