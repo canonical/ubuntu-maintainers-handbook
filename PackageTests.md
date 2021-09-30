@@ -169,6 +169,22 @@ $ autopkgtest --no-built-binaries --apt-upgrade --setup-commands setup-testbed -
 $ autopkgtest --no-built-binaries --apt-upgrade --setup-commands setup-testbed --shell-fail systemd_247.3-1ubuntu2.dsc -- ssh -s nova -- --flavor cpu8-ram16-disk50 --image ubuntu/ubuntu-hirsute-daily-arm64-server-20201125-disk1.img --keyname paelzer_canonistack-bos01
 ```
 
+#### Restrict networking
+
+Sometimes issues seem to happen only on autopkgtest infrastructure and part of
+it is due to various networking restriction being present there. This isn't
+replicating that 100% as there are also firewalls in place, but if in doubt
+it often is worth to retry a local VM based repro with this to check if it
+fails this way.
+
+What you need to do is adding the internal proxy (needs VPN up); or if you want
+to try another proxy of your choice that is rather restrictive. Then add this
+to the call of autopkgtest `--env='no_proxy=127.0.0.1,127.0.1.1,localhost,localdomain,novalocal,internal,archive.ubuntu.com,security.ubuntu.com,ddebs.ubuntu.com,changelogs.ubuntu.com,ppa.launchpad.net' --env='http_proxy=http://squid.internal:3128'`
+
+Example when we tracked down an issue with ulfius:
+```
+$ autopkgtest --env='no_proxy=127.0.0.1,127.0.1.1,localhost,localdomain,novalocal,internal,archive.ubuntu.com,security.ubuntu.com,ddebs.ubuntu.com,changelogs.ubuntu.com,ppa.launchpad.net' --env='http_proxy=http://squid.internal:3128' --no-built-binaries --apt-upgrade --shell-fail ulfius_2.7.1-3.dsc  -- qemu ~/work/autopkgtest-impish-amd64.img
+```
 
 ### Save the Results
 
