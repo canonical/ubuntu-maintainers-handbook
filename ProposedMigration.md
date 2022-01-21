@@ -275,11 +275,11 @@ Excuse Glossary
     + https://people.canonical.com/~ubuntu-archive/component-mismatches.txt
     + https://wiki.ubuntu.com/ArchiveAdministration#Component_Mismatches_and_Changing_Overrides
     + See: https://wiki.ubuntu.com/MainInclusionProcess
-    + One very special case of these can be unintented dependencies due to extra-includes.
+    + One very special case of these is unintended dependencies due to extra-includes.
       Please be aware that while most Dependencies seem obvious (Seeds -> packages -> packages)
       there is an aspect of germinate which will [automatically include](https://git.launchpad.net/~ubuntu-core-dev/ubuntu-seeds/+git/ubuntu/tree/supported#n124) all -dbg, -dev, -doc* packages in a source archive that is in main.
       In [Germinate](https://people.canonical.com/~ubuntu-archive/germinate-output/ubuntu.jammy/all)
-      such will appear as `Rescued from <src>`. In case a merge is affected, the solution without adding delta usually is to
+      these will appear as `Rescued from <src>`. In case a merge is affected, the solution without adding delta usually is to
       add an `Extra-exclude` like in this [example with net-snmp](https://code.launchpad.net/~sergiodj/ubuntu-seeds/+git/ubuntu/+merge/414063).
 
   - Circular Test Dependencies
