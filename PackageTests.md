@@ -171,11 +171,16 @@ $ autopkgtest --no-built-binaries --apt-upgrade --setup-commands setup-testbed -
 
 #### Restrict networking
 
-Sometimes issues seem to happen only on autopkgtest infrastructure and part of
-it is due to various networking restriction being present there. This isn't
-replicating that 100% as there are also firewalls in place, but if in doubt
-it often is worth to retry a local VM based repro with this to check if it
-fails this way.
+Some DEP8 test failures occur due to the autopkgtest environment's
+network restrictions.  A good clue of this is when the tests pass
+reliably locally yet fail after uploading to Launchpad.  Other clues
+include test logs mentioning port errors, inaccessible URLs or IPs, and
+upstream language packaging tools like npm, compose, pip, etc.
+
+The network restrictions can be mimicked by invoking autopkgtest locally
+with an internal proxy.  This isn't replicating that 100% as there are
+also firewalls in place, but if in doubt it often is worth to retry a
+local VM based repro with this to check if it fails this way.
 
 What you need to do is adding the internal proxy (needs VPN up); or if you want
 to try another proxy of your choice that is rather restrictive. Then add this
