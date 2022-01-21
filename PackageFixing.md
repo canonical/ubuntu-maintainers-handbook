@@ -27,11 +27,12 @@ The original bug report was filed with just this description:
     Mar 5 14:30:05 hostname-here kernel: [ 672.082204] postconf[12975]: segfault at 40 ip 0000564d613ff053 sp 00007ffc39e19b90 error 4 in postconf[564d613e7000+25000]
     Mar 5 14:30:06 hostname-here kernel: [ 672.303499] postconf[13004]: segfault at 40 ip 000055b29d0f8053 sp 00007fff72f4b740 error 4 in postconf[55b29d0e0000+25000]
 
-    According to Apport log, the crash is caused by following command line:
+According to the Apport log, the crash is caused by following command line:
 
-    postconf -h queue_directory
+    $ postconf -h queue_directory
 
-    Running the command in shell however works as expected and lists the default spool directory (/var/spool/postfix).
+Running the command in the shell, however, works as expected and lists
+the default spool directory (/var/spool/postfix).
 
     ProblemType: Bug
     DistroRelease: Ubuntu 18.04
@@ -44,7 +45,16 @@ The original bug report was filed with just this description:
     SourcePackage: postfix
     UpgradeStatus: No upgrade log present (probably fresh install)
 
-Note that the metadata at the end of the description is what gets appended when filing a bug report is automatically triggered, or if the user uses a bug reporting assistant (i.e. Apport).
+Note that the metadata at the end of the description is what gets
+appended when filing a bug report is automatically triggered, or if the
+user uses a bug reporting assistant (i.e. Apport).
+
+Sometimes these types of bug reports will also include an attached
+"something.crash" file.  This is created by the Apport process running
+on the user's system at the time of segfault, and typically includes the
+core dump, logs, and other relevant information.  If the user has
+provided a .crash file, you can (examine it manually)[DebugApportCrash.md]
+to get a useful stacktrace.
 
 
 ### Try to reproduce the issue
