@@ -100,8 +100,7 @@ https://bugs.launchpad.net/ubuntu/+source/[package]
 
 https://tracker.debian.org/pkg/[package]
 
-If there are bugs you'd like to fix, make a new SRU style commit at the end of the merge process and put them together in the same merge proposal.
-
+If there are bugs you'd like to fix, make a new SRU style commit at the end of the merge process and put them together in the same merge proposal. This process is described in the [Adding new changes](#adding-new-changes) section below.
 
 ### Make a bug report for the merge
 
@@ -440,6 +439,13 @@ Removing `1aed93f` will remove the patch.
     $ quilt pop -a
 
 
+### Adding new changes
+
+Add any new changes you may want to include with the merge. For instance, the new package version may FTBFS in Ubuntu due to new versions of specific libraries or runtimes.
+
+Each logical change should be in its own commit to match the work done up to this point on splitting the logical changes.
+Moreover, there is no need to add changelog entries for these changes manually. They will be generated from the commit messages with the merge finish process described below.
+
 ### Finish the Merge
 
     $ git ubuntu merge finish ubuntu/devel --bug 1803296
@@ -458,6 +464,14 @@ If you dropped any changes (due to upstream fixes), you must note them in the ch
       * Dropped Changes:
         - Foo: change to bar
           [Fixed in 1.2.3-4]
+
+#### Format any new added changes
+
+If you added any new changes, they should be in their own section in the changelog:
+
+      * New Changes:
+        - Bar: change to foo
+        - Baz: adjust for Foo changes
 
 #### Commit the changelog fix:
 
