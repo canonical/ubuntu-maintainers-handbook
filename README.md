@@ -18,16 +18,21 @@ Sections
    - [Package Building](PackageBuilding.md)
    - [Package Tests](PackageTests.md)
    - [Merge Proposals](MergeProposal.md)
+   - [Syncing from Debian](Syncs.md)
  * Package Maintenance
    - [Package Fixing & SRUs](PackageFixing.md)
    - [Package Merging](PackageMerging.md)
    - [Main Inclusion](MainInclusion.md)
+   - [Proposed Migration](ProposedMigration.md)
  * Debugging
    - [Apport Crash Files](DebugApportCrash.md)
  * Reviewing
    - [Reviewing Merge Proposals](MergeProposalReview.md)
    - [Bug Triage](BugTriage.md)
+   - [Bug Report Responses](BugReportResponses.md)
  * Requesting Upload Rights
    - [PackageSet](MembershipInPackageSet.md)
  * Quick References
    - [Check Lists](CheckListsSheets.md)
+     + [Bug Fix Checklist](BugFixingCheckList.md)
+

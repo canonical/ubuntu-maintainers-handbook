@@ -26,7 +26,9 @@ Here is the typical lifecycle for an upload:
       *  Reporter or developer verifies fix, and updates tags
   8.  Release package from [codename]-proposed to [codename]
 
-Often the migration proceeds automatically, but when there are issues our involvement is needed to sort things out.  Sometimes the package having the problem is one we've uploaded ourselves, so naturally want to work on solving the issue.  But in other times the issue arises organically such as via something that auto-sync'd from Debian, or a side-effect from some other change in the distro, and thus have no defined "owner".  For these latter problems (and for the former when they've become tricky), the Ubuntu project requires some of its distro developers to devote a portion of their time to focusing on migration issues generally, on a rotating basis each working a few days or week at a time.
+Often the migration proceeds automatically, but when there are issues our involvement is needed to sort things out.  Sometimes the package having the problem is one we've uploaded ourselves, and responsibility generally lays with the uploader to analyze and solve the issue.
+
+However, there are numerous other situations that lead to migration trouble, for which there is not a specific responsible party.  These types of issues are focused on as part of the "Plus-One Maintenance" effort, where individuals across the distro team are tasked to work on examining and solving them.  Some of these types of problems arise from items auto-sync'd from Debian, or via a side-effect of some other change in the distro.
 
 Following are tips and tricks for solving migration issues, and some guidance for people just starting the proposed migration duty.
 
@@ -75,8 +77,166 @@ Finally, there are also a miscellania of other problems that can result in build
 Autopkgtest Regressions
 -----------------------
 
-After a package has successfully built, the [autopkgtest infrastructure](https://autopkgtest.ubuntu.com/) will run its [DEP8 tests](https://packaging.ubuntu.com/html/auto-pkg-test.html) for each of its supported architectures.  Failed tests can block the migration, and "Regression" listed for the failed architecture(s).
+After a package has successfully built, the [autopkgtest infrastructure](https://autopkgtest.ubuntu.com/) will run its [DEP8 tests](https://packaging.ubuntu.com/html/auto-pkg-test.html) for each of its supported architectures.  Failed tests can block the migration, and "Regression" listed for the failed architecture(s), worded like:
 
+### "Migration status for aaa (x to y): <reason>"
+
+This means package "aaa" has a new version y uploaded to -proposed, to replace the existing version x, but the change has not yet been permitted.  The various reasons typically seen are outlined in the items below.
+
+### "Waiting for test results, another package or too young (no action required now - check later)"
+
+This means one or more tests still need to be run.  These will be noted as 'Test in progress' under the 'Issues preventing migration' line item.
+
+### "Will attempt migration (Any information below is purely informational)"
+
+This is good, it indicates the item is currently in process and likely will migrate soon (within a day or so).
+
+### "Waiting for another item to be ready to migrate (no action required now - check later)"
+
+This can be good if it's recent, but if it's more than a few days old then there may be a deeper issue going on with a dependency.  In the former case, just give it some time (maybe a day or so).  In the latter case, refer to the items listed under the 'Issues preventing migration:' line to see what specifically has gone wrong, and then see the "Issues Preventing Migration" section (below) for diagnostic tips.
+
+### "BLOCKED: Cannot migrate due to another item, which is blocked (please check which dependencies are stuck)"
+
+The package itself is likely fine, but it's being blocked by some issue with some other package.  Check beneath the 'Invalidated by dependency' line to see what package(s) need attention.
+
+
+### "BLOCKED: Maybe temporary, maybe blocked but Britney is missing information (check below)"
+
+One situation where this can occur is if one of the package's dependencies is failing to build, which will be indicated by a line stating "missing build on <arch>".  Once the dependency's build failure is resolved, this package should migrate successfully; if it doesn't within a day or so, a retrigger may be in order.
+
+### "BLOCKED: Rejected/violates migration policy/introduces a regression"
+
+This indicates an "Autopkgtest Regression" with the given package, and is by far the most common situation where your attention will be required.  A typical like will look something like:
+
+* autopkgtest for [package]/[version]: amd64: <span style="background-color:darkred">Regression</span>, arm64: <span style="background-color:yellow">Not a regression</span>, armhf: <span style="background-color:green">Pass</span>, ppc64el: <span style="background-color:#99DDFF">Test in progress</span>, ...
+
+The 'Regression' items indicate problems needing solved.  See the 'Issues Preventing Migration' section (below), for diagnositic tips.
+
+Sometimes you'll see lines where all the tests have passed (or, at least, none are marked Regression).  Usually passing packages are omitted from the display.  When they're not omitted, it generally means that the test ran against an outdated version of the dependency.  For example, you may see:
+
+* python3-defaults (3.10.1-0ubuntu1 to 3.10.1-0ubuntu2)
+    - Migration status for python3-defaults (3.10.1-0ubuntu1 to 3.10.1-0ubuntu2): BLOCKED: Rejected/violates migration policy/introduces a regression
+    - Issues preventing migration:
+    - ...
+    - autopkgtest for netplan.io/0.104-0ubuntu1: amd64: Pass, arm64: Pass, armhf: Pass, ppc64el: Pass, s390x: Pass.
+    - ...
+
+In this case, check rmadison:
+
+    $ rmad netplan.io
+    netplan.io | 0.103-0ubuntu7   | impish
+    netplan.io | 0.104-0ubuntu2   | jammy
+
+    netplan.io | 0.103-3       | unstable
+
+We can see our test ran against version 0.104-0ubuntu1, but a newer version 0.104-0ubuntu2 is in the archive.  If we look at the autopkgtest summary page for one of the architectures, we see:
+
+    ## https://autopkgtest.ubuntu.com/packages/n/netplan.io/jammy/amd64
+    0.104-0ubuntu2    netplan.io/0.104-0ubuntu2   2022-03-10 11:38:36 UTC     1h 01m 59s  -   pass    log   artifacts
+    ...
+    0.104-0ubuntu1    python3-defaults/3.10.1-0ubuntu2    2022-03-08 04:26:47 UTC     0h 44m 47s  -   pass    log   artifacts  
+    ...
+
+Notice that version 0.104-0ubuntu1 was triggered against the python3-defaults version currently in -proposed, but version 0.104-0ubuntu2 was only ran against netplan.io itself, and thus ran against the old python3-defaults.  We need to have a test run against both these new versions (and against any other of netplan.io's dependencies also in -proposed.)
+
+The ['excuses-kicker' tool](https://code.launchpad.net/~bryce/+git/excuses-kicker) is a convenient way to generate the retrigger URLs:
+
+    $ excuses-kicker netplan.io
+    https://autopkgtest.ubuntu.com/request.cgi?release=jammy&arch=amd64&package=netplan.io&trigger=netplan.io%2F0.104-0ubuntu2&trigger=symfony%2F5.4.4%2Bdfsg-1ubuntu7&trigger=pandas%2F1.3.5%2Bdfsg-3&trigger=babl%2F1%3A0.1.90-1&trigger=python3-defaults%2F3.10.1-0ubuntu2&trigger=php-nesbot-carbon%2F2.55.2-1
+    ...
+
+Notice how it's picked up not only python3-defaults but also several additional packages that netplan.io has been run against in the recent past.  These aren't necessarily direct dependencies for netplan.io, but serve as an informed guess.
+
+
+Issues Preventing Migration
+---------------------------
+
+Packages can fail to migrate for a vast number of different reasons.  Sometimes the clues listed under the 'Issues preventing migration:" line item on the update_excuses page will be sufficient to indicate the next action necessary; that will be the focus of this section.  In other cases, the autopkgtest log file will need analyzed; that is covered in a latter section.
+
+
+### Main/Universe Binary Mismatch
+
+A given source package may have some binaries in main and others in universe, but this can get mixed up for various reasons.  This genre of issues, known as ["component mismatches"](https://people.canonical.com/~ubuntu-archive/component-mismatches.txt) is spotted from migration excuses like:
+
+  - "php8.1-dba/amd64 in main cannot depend on libqdbm14 in universe"
+
+Check the prior release to see if php8.1-dba and libqdbm14 were both in main, or both in universe.  If both were in universe before, then most likely the package in main needs demoted to universe.  Ask an archive admin to do this, and/or file a bug report (for example, see [LP: #1962491](https://bugs.launchpad.net/ubuntu/+source/php8.1/+bug/1962491).)
+
+Conversely, if the dependency in universe actually needs to be in main, such as for example a newly introduced binary package, then a 'Main Inclusion Request' (MIR) bug report will need to be filed.  See https://wiki.ubuntu.com/MainInclusionProcess for details on this procedure.
+
+If both packages were in main previously, then some additional investigation should be done to see why the universe package moved out of main.  The resolution may be to move one or the other package so they're both in the same pocket, or find a way to remove the dependency between them.
+
+One very special case of these is unintended dependencies due to extra-includes.  Please be aware that while most Dependencies seem obvious (Seeds -> packages -> packages) there is an aspect of germinate which will [automatically include](https://git.launchpad.net/~ubuntu-core-dev/ubuntu-seeds/+git/ubuntu/tree/supported#n124) all -dbg, -dev, -doc* packages in a source archive that is in main.  In [Germinate](https://people.canonical.com/~ubuntu-archive/germinate-output/ubuntu.jammy/all) these will appear as `Rescued from <src>`. In case a merge is affected, the solution without adding delta usually is to add an `Extra-exclude` like in this [example with net-snmp](https://code.launchpad.net/~sergiodj/ubuntu-seeds/+git/ubuntu/+merge/414063).
+
+For more information on component mismatches, from an archive administrative perspective, see:
+
+  - https://wiki.ubuntu.com/ArchiveAdministration#Component_Mismatches_and_Changing_Overrides
+
+
+### Impossible Depends
+
+An excuse like this:
+
+   - "Impossible Depends: aaa -> bbb/x/<arch>"
+
+means package 'aaa' has a dependency on package 'bbb', version x, for architecture 'arch', but it is not possible to satisfy this.
+
+One reason this can occur is if package 'bbb' is in universe whereas 'aaa' is in main.  It may be that some of package aaa's binaries need to be moved to universe.  See 'Main/Universe Binary Mixups' (above) for directions.
+
+
+### Migrating Makes Something Uninstallable
+
+A migration excuse in this format:
+
+   - "migrating [aaa]/[aaa-new-version]/[arch] to testing makes [bbb]/[bbb-version]/[arch] uninstallable"
+
+means that package bbb has a versioned build dependency against the old version of package aaa.  A no-change rebuild can be used in these cases to force a rebuild.
+
+### Depends: aaa [bbb] (not considered)
+
+Package "aaa" is blocked because it depends on "bbb", however "bbb" is either invalid or rejected.
+
+If the dependency itself is not valid, this line will be followed by an 'Invalidated by dependency' line.  In this case, look at the situation with package "bbb" and resolve it first, in order to move package "aaa" forward.
+
+If there is no 'Invalidated by dependency' line, then the dependency may be rejected.  There are three reasons why a rejection can occur:  a) it needs approval, b) cannot determine if permanent, or c) permanent rejection.
+
+
+### Implicit dependency: aaa [bbb]
+
+An implicit dependency is a pseudo dependency where Breaks/Conflicts creates an inverted dependency.  For example, pkg-b Depends on pkg-a, but pkg-a=2.0-1 breaks pkg-b=1.0-1, so pkg-b=2.0-1 must migrate first (or they must migrate together).  A way to handle this is to re-run pkg-b's autopkgtest (for 2.0-1) and include a trigger for pkg-a=2.0.  For example, run:
+
+    $ excuses-kicker -t pkg-a pkg-b
+
+This can also occur if pkg-b has "Depends: pkg-a (<< 2.0)", due to use of some non-stable internal interface.
+
+It can also occur if pkg-a has a Provides that changes from 1.0-1 to 2.0-1, but pkg-b has a Depends on the earlier version.
+
+
+### Implicit dependency: aaa [bbb] (not considered)
+
+Similar to above, "aaa" and "bbb" are intertwined, but "bbb" is also either invalid or rejected.  For these cases, attention should first go to resolving the issue(s) for "bbb", and then re-running the autopkgtest for it with a trigger included against package "aaa".
+
+
+### Has no binaries on arch <arch>
+
+Usually this means the package has either failed to build or failed to upload the binaries for a build.  Refer to the 'Failed to Build From Source' section for tips on how to handle this class of problem.
+
+
+### Has no binaries on any arch (- to x.y.z)
+
+If the package doesn't have a current version, this error can indicate the package is not (yet) in the archive, or it can mean its binaries were removed previously but not sync-blacklisted and thus reappeared.
+
+If the package should not be sync'd into the archive, on #ubuntu-release ping "ubuntu-archive" with request to remove the packages' binaries and add them to sync-blacklist.txt
+
+Otherwise, there are several things worth checking (note: These links are for jammy; modify them for the current development release):
+
+  - [Stuck in New queue](https://launchpad.net/ubuntu/jammy/+queue?queue_state=0)
+
+  - [Stuck in Unapproved queue](https://launchpad.net/ubuntu/jammy/+queue?queue_state=1)
+
+
+Autopkgtest Log Files
+---------------------
 You can view the recent test run history for a package's architecture by clicking on the respective architecture's name.
 
 Tests can fail for myriad reasons.
@@ -130,7 +290,40 @@ All autopkgtests follow this general format, although the output from the tests 
 Beyond "regular" test case failures like this one, autopkgtest failures can also occur due to missing or incorrect dependencies, test framework timeouts, and other issues.  Each of these is discussed in more detail below.
 
 
-### Test Dependency Irregularities ###
+Special Cases
+-------------
+
+## Circular Build Dependencies ##
+
+When two or more packages have new versions that depend on each other's new versions in order to _build_, this can lead to a [circular build dependency](https://wiki.debian.org/CircularBuildDependencies).  There's a few different ways these come into being, which have unique characteristics that can help find a way to work through them.
+
+### 1.  Build-Dependencies for Testsuites
+
+If package A's build process invokes a testsuite as part of the build (i.e. in debian/rules under override_dh_auto_test), and the testsuite requires package B, then if package B requires package A to build, this creates a situation where neither package will successfully build.
+
+The workaround in this case is to (temporarily) disable running the testsuite during build.  This is usually ok when the package's autopkgtests (defined in debian/tests/control) also run the testsuite.  For instance:
+
+    override_dh_auto_test:
+        echo "Disabled: phpunit --bootstrap vendor/autoload.php"
+
+You may also need to delete test dependencies from debian/control, and/or move them to debian/tests/control.
+
+With package A's testsuite thus disabled during build, it will build successfully but then fail its autopkgtest run.  Next, from package B's launchpad page request rebuilds for each binary in a failed state.  Once package B has successfully built on all supported architectures, package A's autopkgtests can be rerun using package B as a trigger.
+
+Once everything's migrated successfully, a cleanup step would be to re-enable package A's testsuite and verify it now passes.
+
+### 2.  Bootstrapping
+
+In this situation, packages A-1.0 and B-1.0 are in the archive.  We're introducing new versions A-3.0 and B-3.0 (skipping 2.0); A-3.0 depends on B-3.0, and B-3.0 requires A-2.0 or newer.  Both A-3.0 and B-3.0 will fail to build.
+
+One example of where this can occur is if code common to both A and B is refactored out to a new binary package that is provided in A starting at version 2.0.
+
+The most straightforward solution to this situation is to ask an archive admin to delete both A-3.0 and B-3.0 from the archive, then upload version A-2.0 and allow it to build (and ideally migrate).  Next reintroduce B-3.0, and then once that's built, do the same for A-3.0.
+
+With even larger version jumps, e.g. from A-1.0 to A-5.0, it may be required to do multiple bootstraps, and some experimentation to see which intermediary version(s) need to be jumped to.  Another common complication can be where the cycle involves more than two packages.
+
+
+## Test Dependency Irregularities ##
 
 The package's [debian/tests/control file defines what gets installed](https://salsa.debian.org/ci-team/autopkgtest/blob/master/doc/README.package-tests.rst) in the test environment before executing the tests.  You can review and verify the packages and versions in the DEP8 test log, between the lines 'autopkgtest...: test integration: preparing testbed' and 'Removing autopkgtest-satdep'.
 
@@ -139,159 +332,69 @@ A common issue is that the test should be run against a version of a dependency 
 As with rebuilds, these retriggers also require core-dev permissions, so if you're not yet core-dev give the links to someone who is for assistance.
 
 
-### Test Framework Timeouts and Out of Memory ###
+## Test Framework Timeouts and Out of Memory ##
 
-The autopkgtest framework will kill tests that take too long to run.  In some cases it makes sense to just configure autopkgtest to let the test run longer.  This is done by setting the ```long_tests``` option.  Similarly, some tests may need more CPU or memory than in a standard worker.  The ```big_packages``` option directs autopkgtest to run these on workers with more CPU and memory.  Both these options and the effective memory/cpu sizes are explained on the [ProposedMigration](https://wiki.ubuntu.com/ProposedMigration#autopkgtests) page.
+The autopkgtest framework will kill tests that take too long to run.  In some cases it makes sense to just configure autopkgtest to let the test run longer.  This is done by setting the ```long_tests``` option.  Similarly, some tests may need more CPU or memory than in a standard worker.  The ```big_packages``` option directs autopkgtest to run these on workers with more CPU and memory.  Both these options are explained on the [ProposedMigration](https://wiki.ubuntu.com/ProposedMigration#autopkgtests) page.
+
 It is worth to mention that Debian test sizing is currently (as of 2021) equivalent to our big_packages.
 
 The configuration that associates source packages to either `big_packages` / `long_tests` and the actual deployment code was recently split.
 [The new docs](https://autopkgtest-cloud.readthedocs.io/en/latest/administration.html#give-a-package-more-time-or-more-resources) explain this and link [a repository](https://code.launchpad.net/~ubuntu-release/autopkgtest-cloud/+git/autopkgtest-package-configs) which is now mergeable by any release team member.
 
+## Disabling/skipping tests ##
 
-### Other Common Issues ###
+While ideally failing tests should receive fixes to enable them to pass properly, sometimes this is infeasible or impossible.  In such extreme situations it may be necessary to explicitly disable a test case or an entire testsuite.  For instance, if an unimportant package's test failure blocks a more important package from transitioning.
 
-Autopkgtest runs tests in a controlled network environment, so if a test case expects to download material from the internet, it will likely fail.  If the test case is attempting to download a dependency (e.g. via PIP or Maven), sometimes this can be worked around by adding the missing dependency to ```debian/tests/control```.  If it is attempting to download an example file, then it may be possible to make the test case use a local file, or to load from the proxy network.
+As a general rule, try to be as surgical as possible and avoid disabling more than is absolutely required.  For example, if a test has 10 sub-cases and only one sub-case fails, prefer to comment out or delete that sub-case rather than the entire test.
+
+There is no single method to disabling tests, unfortunately, since different programming languages take differing design approaches for their test harnesses.  Some test harnesses have provisions for marking tests "SKIP".  In other situations it may be cleaner to add a debian patch that simply deletes the test's code from the codebase.  Sometimes it works best to insert an early return with a fake PASS in the particular code path that broke.
+
+Take care when disabling a test to include a detailed enough explanation for why you're disabling it, that would inform a future packager as to when the test can be re-enabled.  For instance, if a proper fix will be available in a future release, say so and indicate what version will have it.  Or, if the test is being disabled just to get another package to transition, indicate what that package's name and expected version.  Bug reports, DEP3 comments, and changelog entries can be good places to document these clues.
 
 
-Skipping tests
---------------
+## Disabling/skipping/customizing tests for certain architectures ##
+
+If you need to disable the entire testsuite for a specific architecture, such as an arch that upstream doesn't include in their CI testing, and that sees frequent and ample failures on our end, then you can skip the testing via checks in the debian/rules file.  For example (from util-linux-2.34):
+
+    override_dh_auto_test:
+    ifneq (,$(filter alpha armel armhf arm64,$(DEB_HOST_ARCH)))
+            @echo "WARNING: Making tests non-fatal because of arch $(DEB_HOST_ARCH)"
+            dh_auto_test --max-parallel=1 || true
+    else ifeq ($(DEB_HOST_ARCH_OS), linux)
+            dh_auto_test --max-parallel=1
+    endif
+
+If the issue is the integer type size, here's a way to filter based on that (from mash-2.2.2+dfsg):
+
+    override_dh_auto_test:
+    ifeq (,$(filter nocheck,$(DEB_BUILD_OPTIONS)))
+    ifeq ($(DEB_HOST_ARCH_BITS),32)
+            echo "Do not test for 32 bit archs since test results were calculated for 64 bit."
+    else
+            dh_auto_test --no-parallel
+    endif
+    endif
+
+Or based on the CPU type itself (from containerd-1.3.3-0ubuntu2.1):
+
+    override_dh_auto_test:
+    ifneq (arm, $(DEB_HOST_ARCH_CPU)) # skip the tests on armhf ("--- FAIL: TestParseSelector/linux (0.00s)  platforms_test.go:292: arm support not fully implemented: not implemented")
+            cd '$(OUR_GOPATH)/src/github.com/containerd/containerd' && make test
+    endif
+
+
+## Skipping autopkgtesting entirely ##
 
 If an autopkgtest is badly written, it may be too challenging to get it to pass.  In these extreme cases, its possible to request that test failures be ignored for purposes of package migration.
 
-Checkout [lp:~ubuntu-release/britney/hints-ubuntu](https://git.launchpad.net/~ubuntu-release/britney/+git/hints-ubuntu)
+Checkout [https://git.launchpad.net/~ubuntu-release/britney/+git/hints-ubuntu](lp:~ubuntu-release/britney/hints-ubuntu)
 
 File a MP against it with a description indicating the lp bug#, rationale for why the test can and should be skipped, and explanation of what will be unblocked to migration.
 
 Reviewers should be 'canonical-server', 'ubuntu-release', and any archive admins or foundations team members you've discussed the issue with.
 
-Please be aware that some old docs or habits might mislead you.
-The most common hint used to be "force-badtest" to mark one bad, which
-was superseded by the more useful 'force-reset' allowing results to come
-back to be good without further action on the hints.
-But even that recently got replaced by `migration-reference/0`.
-It essentially allows the functionality of `force-reset` without needing
-to bother the release team.
-See [here for details](https://lists.ubuntu.com/archives/ubuntu-devel/2021-November/041663.html).
 
+## Other Common Issues ##
 
-Excuse Glossary
----------------
+Autopkgtest runs tests in a controlled network environment, so if a test case expects to download material from the internet, it will likely fail.  If the test case is attempting to download a dependency (e.g. via PIP or Maven), sometimes this can be worked around by adding the missing dependency to ```debian/tests/control```.  If it is attempting to download an example file, then it may be possible to make the test case use a local file, or to load from the proxy network.
 
-* Migration status for aaa (x to y):
-
-  This means package "aaa" has a new version y uploaded to -proposed, to
-  replace the existing version x, but the change has not yet been
-  permitted.
-
-
-* Issues preventing migration:"
-
-  This heading marks the start of a list of verdicts decided by
-  britney2 about why the package should not be permitted.  This list
-  ends at the 'Additional info:' heading.
-
-
-* Impossible <deptype>: aaa -> bbb/x/arch
-
-  Package 'aaa' has a dependency on package 'bbb', version x, for
-  architecture 'arch', but it is not possible to satisfy this.
-
-
-* Invalidated by <deptype>
-
-  The package had a dependency that itself was not a valid migration
-  candidate.
-
-
-* Implicit dependency: aaa <bbb>
-
-  An implicit dependency is a pseudo dependency where Breaks/Conflicts
-  creates an inverted dependency.  For example, pkg-b Depends on pkg-a,
-  but pkg-a=2.0-1 breaks pkg-b=1.0-1, so pkg-b=2.0-1 must migrate first
-  (or they must migrate together).  A way to handle this is to re-run
-  pkg-b's autopkgtest (for 2.0-1) and include a trigger for pkg-a=2.0.
-
-  This can also occur if pkg-b has "Depends: pkg-a (<< 2.0)", due to use
-  of some non-stable internal interface.
-
-  It can also occur if pkg-a has a Provides that changes from 1.0-1 to
-  2.0-1, but pkg-b has a Depends on the earlier version.
-
-
-* Implicit dependency: aaa <bbb> (not considered)
-
-  Similar to above, "aaa" and "bbb" are intertwined, but "bbb" is also
-  either invalid or rejected.  For these cases, attention should first
-  go to resolving the issue(s) for "bbb", and then re-running the
-  autopkgtest for it with a trigger included against package "aaa".
-
-
-* Depends: aaa <bbb>
-
-  Package "aaa" is blocked because it depends on "bbb" which has not yet
-  migrated.
-
-
-* Depends: aaa <bbb> (not considered)
-
-  Package "aaa" is blocked because it depends on "bbb", however "bbb" is
-  either invalid or rejected.  If the dependency itself is not valid,
-  this line will be followed by an 'Invalidated by dependency' line.
-
-  There are three reasons why a rejection can occur:  a) it needs
-  approval, b) cannot determine if permanent, or c) permanent rejection.
-
-* Has no binaries on arch <xyz>
-
-  Usually this means the package has either failed to build or failed to
-  upload the binaries for a build.  The FTBFS section (above) covers how
-  to handle this class of problem.
-
-  Packages that fail on a single arch can be great candidates for
-  debugging and resolving, since the failures are more likely to be
-  limited in scope and reproducible either locally or via Canonistack.
-
-* Has no binaries on any arch (- to x.y.z)
-
-  If the package doesn't have a current version, this error can indicate
-  the package is not (yet) in the archive, or it can mean its binaries
-  were removed previously but not sync-blacklisted and thus reappeared.
-
-  If the package should not be sync'd into the archive, on
-  #ubuntu-release ping "ubuntu-archive" with request to remove the
-  packages' binaries and add them to sync-blacklist.txt
-
-  Otherwise, there are several things worth checking:
-
-  - Stuck in New queue?
-    https://launchpad.net/ubuntu/<codename>/+queue?queue_state=0
-
-  - Stuck in Unapproved queue?
-    https://launchpad.net/ubuntu/<codename>/+queue?queue_state=1
-
-  - Main/Universe component mismatch?
-    If blocked package is in main, but new dependency is in universe,
-    then will need to file a MIR.
-    + https://people.canonical.com/~ubuntu-archive/component-mismatches.txt
-    + https://wiki.ubuntu.com/ArchiveAdministration#Component_Mismatches_and_Changing_Overrides
-    + See: https://wiki.ubuntu.com/MainInclusionProcess
-    + One very special case of these is unintended dependencies due to extra-includes.
-      Please be aware that while most Dependencies seem obvious (Seeds -> packages -> packages)
-      there is an aspect of germinate which will [automatically include](https://git.launchpad.net/~ubuntu-core-dev/ubuntu-seeds/+git/ubuntu/tree/supported#n124) all -dbg, -dev, -doc* packages in a source archive that is in main.
-      In [Germinate](https://people.canonical.com/~ubuntu-archive/germinate-output/ubuntu.jammy/all)
-      these will appear as `Rescued from <src>`. In case a merge is affected, the solution without adding delta usually is to
-      add an `Extra-exclude` like in this [example with net-snmp](https://code.launchpad.net/~sergiodj/ubuntu-seeds/+git/ubuntu/+merge/414063).
-
-  - Circular Test Dependencies
-    If several related packages are attempting to sync, which depend on
-    each other, they may be blocked simply due to needing the -proposed
-    versions of their dependencies.  In this case, a properly crafted
-    retrigger may be worth attempting.
-
-  - Circular Build Dependencies
-    Similarly, a package may depend on -proposed versions of another
-    package to _build_... and that second package depends directly or
-    indirectly on the -proposed version of the first package.  These are
-    trickier to sort out
-    + See https://wiki.debian.org/CircularBuildDependencies
-    + https://wiki.ubuntu.com/UbuntuArchitecture#Builds
