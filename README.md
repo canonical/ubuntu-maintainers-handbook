@@ -33,6 +33,7 @@ Sections
    - [Bug Report Responses](BugReportResponses.md)
  * Requesting Upload Rights
    - [PackageSet](MembershipInPackageSet.md)
+   - [MembershipInMOTU](MembershipInMOTU.md)
  * Quick References
    - [Check Lists](CheckListsSheets.md)
      + [Bug Fix Checklist](BugFixingCheckList.md)
