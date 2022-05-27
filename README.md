@@ -24,6 +24,7 @@ Sections
    - [Package Merging](PackageMerging.md)
    - [Main Inclusion](MainInclusion.md)
    - [Proposed Migration](ProposedMigration.md)
+   - [Transitions of Libraries and Languages](Transitions.md)
    - [Salsa Package Maintenance](SalsaDualMaintenance.md)
  * Debugging
    - [Apport Crash Files](DebugApportCrash.md)
@@ -34,6 +35,7 @@ Sections
  * Requesting Upload Rights
    - [PackageSet](MembershipInPackageSet.md)
    - [MembershipInMOTU](MembershipInMOTU.md)
+   - [MembershipInCoreDev](MembershipInCoreDev.md)
  * Quick References
    - [Check Lists](CheckListsSheets.md)
      + [Bug Fix Checklist](BugFixingCheckList.md)
