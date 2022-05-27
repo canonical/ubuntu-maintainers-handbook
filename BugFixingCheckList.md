@@ -112,7 +112,7 @@
         - [ ]  Optional: Lintian output
   ---
 After the submission (once you get it Approved):
-- [ ] **7.** Upload the package (or look for sponsorship).
+- [ ] **7.** Upload the package (or [look for Sponsorship](Sponsorship.md)).
     - [ ] Check that it builds ok and it gets published in the archive (https://launchpad.net/ubuntu/+source/<package_name>) or check mail.
     - [ ] Change the MP status to "Merged".
 - [ ]  **8.** Tracking migration: check update_excuses

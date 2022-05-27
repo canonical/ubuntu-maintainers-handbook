@@ -18,6 +18,7 @@ Sections
    - [Package Building](PackageBuilding.md)
    - [Package Tests](PackageTests.md)
    - [Merge Proposals](MergeProposal.md)
+   - [Sponsorship](Sponsorship.md)
    - [Syncing from Debian](Syncs.md)
  * Package Maintenance
    - [Package Fixing & SRUs](PackageFixing.md)

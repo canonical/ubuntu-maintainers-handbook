@@ -5,7 +5,7 @@ Upload rights can be given for certain package-sets, such as 'server' or 'deskto
 
 For this reason, some people skip this level and head straight for MOTU or core-dev instead; if you already have strong packaging experience via another distro you certainly can consider doing similarly.
 
-That said, even if you intend to eventually apply for core-dev, gaining package-set first can be an effective way to build towards those roles, allowing you to upload your own work (within limits) and participate in reviews and sponsorship of co-workers.
+That said, even if you intend to eventually apply for core-dev, gaining package-set first can be an effective way to build towards those roles, allowing you to upload your own work (within limits) and participate in reviews and [sponsorship of co-workers](Sponsorship.md).
 
 
 Application Process
