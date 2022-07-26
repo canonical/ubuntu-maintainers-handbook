@@ -3,7 +3,43 @@ Running Package Tests
 
 Packages will have their own tests under `debian/tests`. We need to run those to ensure there are no regressions.
 
-We use autopkgtest to run the tests in a VM or container.
+We can have Launchpad do it against a PPA, or use an LXC container or a VM to run the autopkgtests locally.  Each approach has its benefits, so they're all worth learning, but the first option (PPA-based testing) produces results most similarly to what occurs in the archive itself, so we'll start there.
+
+
+PPA-Based Autopkgtest Testing
+-----------------------------
+
+First, if you haven't already, grab `lp-test-ppa` from the ubuntu-helpers repository:
+
+    $ git clone https://git.launchpad.net/~ubuntu-server/+git/ubuntu-helpers
+    $ ubuntu-helpers/cpaelzer/lp-test-ppa --help
+    usage: lp-test-ppa [-h] ....
+
+Next, you'll need to [set up a PPA and build your package in it](PackageBuilding.md) as described in the "Building Binary Packages via PPA" section.  Once it has built binaries for the architecture(s) you intend to test,
+
+  $ lp-test-ppa --showurl ppa:kstenerud/postfix-postconf-segfault-1753470 --release bionic
+
+This prints to the console a bunch of lines like:
+
+  Using Release Packages ♻️ 
+  http://autopkgtest.ubuntu.com/request.cgi?release=bionic&arch=amd64&package=postfix&ppa=kstenerud/postfix-postconf-segfault-1753470&trigger=postfix/3.3.0-1ubuntu0.1~ppa1
+  http://autopkgtest.ubuntu.com/request.cgi?release=bionic&arch=s390x&package=postfix&ppa=kstenerud/postfix-postconf-segfault-1753470&trigger=postfix/3.3.0-1ubuntu0.1~ppa1
+  ...
+
+The autopkgtest requests require special permissions to run; as a new developer you'll need to ask your co-workers or a coredev to load them.  If you don't know where else to ask, the #ubuntu-devel IRC channel is suitable.  The --showurl parameter causes these URLs to be printed out so they're easier to cut-and-paste into email or chat channels.
+
+Once you've gained permissions to run autopkgtests, though, you can load each of these URLs in your web browser yourself, which will cause the appropriate autopkgtests to run.  If you omit the --showurl parameter, lp-test-ppa will instead display clickable links, making it even more convenient.
+
+After a while, run `lp-test-ppa` again to see how the tests are coming along:
+
+  $ lp-test-ppa ppa:kstenerud/postfix-postconf-segfault-1753470 --release bionic
+  ...
+  Results: (from http://autopkgtest.ubuntu.com/results/.../?format=plain)
+    postfix @ amd64:
+      14.06.22 21:57:01 ✅     Triggers: postfix/3.3.0-1ubuntu0.1~ppa1
+  ...
+
+You can load up the log URLs to see details about why anything failed.
 
 
 Preparing a Testing Image
@@ -37,7 +73,6 @@ Copy the resulting image (autopkgtest-focal-amd64.img) to a common directory lik
     $ autopkgtest-build-lxd images:ubuntu/impish/amd64
 
 You should see an autopkgtest image now when you run `lxc image list`.
-
 
 
 ### Run the Tests
