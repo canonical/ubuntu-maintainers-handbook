@@ -537,7 +537,7 @@ Notice above that you must also change the `changelog` rebase command to `fixup`
 The range old/ubuntu..logical/<version> should contain no changes to debian/changelog at all. 
 We do not consider this part of the logical delta. So any commits that contain only changes to debian/changelog should be dropped.
 
-#### Protip 
+#### Tip 
     
 If you diff your final logical tag against the Ubuntu package it analyses, then the diff should be empty, except:
 1. All changes to debian/changelog: we deliberately exclude these from the logical tag, relying on commit messages instead.

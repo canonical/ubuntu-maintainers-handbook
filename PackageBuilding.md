@@ -50,7 +50,7 @@ In order for a source package to be accepted by Launchpad, it must be signed. De
 
     $ debsign ../<filename>_source.changes
 
-#### Protip
+#### Tip
 
 To save the chore of determining the changes file, you could create a script that extracts the info from the debian/changelog:
 
@@ -83,7 +83,7 @@ For the text, you can use any string as desired; often people use their username
 As an aside, you'll sometimes run across the suffix style "~18.04.1" which is adopted for reasons similar to the codename, and tends to be a preferred choice in semi-official PPAs such as ones used for official customer deliveries or formally maintained backports to the wider userbase.  To avoid confusion, the '~<codename>N' style may be better for the one-off testing-oriented PPAs being discussed here.
 
 
-#### Protip
+#### Tip
 
 Note, the command below can be used to modify the version for PPA usage:
 
@@ -144,7 +144,7 @@ When it finishes, you should be able to see it e.g. https://launchpad.net/~ksten
 
 Note: You must wait for the package to build server-side before you can use the PPA to install packages. This might take anywhere from a few minutes to a few hours depending on how busy things are!  It'll first build the binaries for each architecture, then publish the source and binary packages to be publically downloadable.
 
-#### Protip
+#### Tip
 
 You can use the `ppa` tool to poll launchpad for progress status:
 
