@@ -43,6 +43,7 @@ Process Steps
    - [Rebase onto New Debian](#rebase-onto-new-debian)
    - [Finish the Merge](#finish-the-merge)
    - [Fix the Changelog](#fix-the-changelog)
+ * [The brief summary of this phase](#a-brief-summary-of-this-phasecheat-sheet)
  * [Upload a PPA](#upload-a-ppa)
    - [Get orig tarball](#get-orig-tarball)
    - [Check the source for errors](#check-the-source-for-errors)
@@ -135,11 +136,7 @@ The Merge Process
 
 From within the git source tree:
 
-    git ubuntu merge start ubuntu/devel --bug [bug number]
-
-For example:
-
-    $ git ubuntu merge start ubuntu/devel --bug 1802914
+    git ubuntu merge start ubuntu/devel
 
 This will generate the following tags for you:
 
@@ -149,17 +146,18 @@ This will generate the following tags for you:
 | old/debian | last import tag prior to old/ubuntu without ubuntu suffix in version |
 | new/debian | debian/sid                                                           |
 
-The tags themselves will be name-spaced to the current bug in the format `lp12345678`. Thus, for example, your tags may look like:
 
- * `lp1802914/old/ubuntu`
- * `lp1802914/old/debian`
- * `lp1802914/new/debian`
+ * `old/ubuntu`
+ * `old/debian`
+ * `new/debian`
 
 If `git ubuntu merge start` fails, [do it manually](#start-a-merge-manually)
 
 #### Make a merge branch
 
-Use the merge tracking bug and the ubuntu version it's going into (for example `disco`).
+Use the merge tracking bug and the current ubuntu devel version it's
+going into (in the example below doing a merge the current ubuntu devel
+was `disco` and the `merge` bug for the case was `1802914`).
 
     $ git checkout -b merge-lp1802914-disco
 
@@ -188,33 +186,76 @@ In this phase, you split out old-style commits that lumped multiple changes toge
 
     $ git log --oneline
 
-    2af0cb7 (HEAD -> merge-3.1.20-6-disco, tag: lp1802914/reconstruct/3.1.20-3.1ubuntu2, tag: lp1802914/split/3.1.20-3.1ubuntu2) import patches-unapplied version 3.1.20-3.1ubuntu2 to ubuntu/disco-proposed
+    2af0cb7 (HEAD -> merge-3.1.20-6-disco, tag: reconstruct/3.1.20-3.1ubuntu2, tag: split/3.1.20-3.1ubuntu2) import patches-unapplied version 3.1.20-3.1ubuntu2 to ubuntu/disco-proposed
     2a71755 (tag: pkg/import/3.1.20-5) Import patches-unapplied version 3.1.20-5 to debian/sid
     9c3cf29 (tag: pkg/import/3.1.20-3.1) Import patches-unapplied version 3.1.20-3.1 to debian/sid
     ...
 
-Get all commit hashes since old/debian, and:
+Get all commit hashes since old/debian and check the summary what they changed using:
 
-    git show [hash] | diffstat
+    git log --stat old/debian..
 
-Example:
 
-    $ git show 2af0cb7 | diffstat
-    changelog |    6 ++++++
-    control   |    4 ++--
-    2 files changed, 8 insertions(+), 2 deletions(-)
 
-Here's another typical example, for the nspr package:
+Example: (comes from merging heimdal package)
 
-    $ git show d7ebe661 | diffstat
-    changelog                                   |  501 ++++++++++++++++++++++++++++
-    control                                     |    3 
-    patches/fix_test_errcodes_for_runpath.patch |   11 
-    patches/series                              |    1 
-    rules                                       |    5 
-    5 files changed, 520 insertions(+), 1 deletion(-)
 
-Any time you see `changelog` and any other file(s) changing in a single commit, it's guaranteed that you'll need to split it; `changelog` should only ever change in it own commit. You should still look over commits to make sure, but this is a dead giveaway.
+    `git log --stat old/debian..`
+
+
+```
+commit 9fc91638b0a50392eb9f79d45d68bc5ac6cd6944 (HEAD ->
+merge-7.8.git20221117.28daf24+dfsg-1-lunar)
+Author: Michal Maloszewski <michal.maloszewski@canonical.com>
+Date:   Tue Jan 17 16:16:01 2023 +0100
+
+    Changelog for 7.8.git20221117.28daf24+dfsg-1
+
+ debian/changelog | 1 -
+ 1 file changed, 1 deletion(-)
+
+
+
+commit e217fae2dc54a0a13e4ac5397ec7d3be527fa243
+Author: Michal Maloszewski <michal.maloszewski@canonical.com>
+Date:   Tue Jan 17 16:13:49 2023 +0100
+
+    update-maintainer
+
+ debian/control | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+
+
+commit 3c66d873330dd594d593d21870f4700b5e7fd153
+Author: Michal Maloszewski <michal.maloszewski@canonical.com>
+Date:   Tue Jan 17 16:13:49 2023 +0100
+
+    reconstruct-changelog
+
+ debian/changelog | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+
+
+commit 58b895f5ff6333b1a0956dd83e478542dc7a10d3
+Author: Michal Maloszewski <michal.maloszewski@canonical.com>
+Date:   Tue Jan 17 16:13:46 2023 +0100
+
+    merge-changelogs
+
+ debian/changelog | 68
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+```
+
+
+It is simple to notice that this command shows us the specific commit,
+what has been changed within the commit (how many files have been
+changed and how many insertions and deletions are there).
+
+
+Any time you see `changelog` and any other file(s) changing in a single commit, it's guaranteed that you'll need to split it; `debian/changelog` should only ever be changed in commits of its own, without touching any other file. You should still look over commits to make sure, but this is a dead giveaway.
 
 Another giveaway would be a commit named `Import patches-unapplied version 1.2.3ubuntu4 to ubuntu/cosmic-proposed`, where it's applying from an ubuntu source rather than a debian one (in this case `ubuntu4`).
 
@@ -258,7 +299,7 @@ In this case, we have the following file changes to separate into logical units:
 
 Start a rebase at old/debian, and then reset to HEAD^ to bring back the changes as uncommitted changes.
 
- 1. Start a rebase: `git rebase -i lp1803562/old/debian`
+ 1. Start a rebase: `git rebase -i old/debian`
  2. Change the commit(s) you're going to split from `pick` to `edit`.
  3. git reset to get your changes back: `git reset HEAD^`
 
@@ -311,13 +352,13 @@ undocumented changes).
 
 It should represent a broken-out history (viewable with git-log) for the latest
 Ubuntu version and no contentful differences to that Ubuntu version. This can
-be verified with `git diff -p lp1803562/old/ubuntu`.
+be verified with `git diff -p old/ubuntu`.
 
 #### Tag Split
 
 Note: Do this even if there were no commits to split.
 
-    $ git ubuntu tag --split --bug 1803562
+    $ git ubuntu tag --split
 
 #### Purpose of logical tag
 
@@ -330,14 +371,14 @@ Note: Do this even if there were no commits to split.
 
 In this phase, we make a clean, "logical" view of the history. This history is cleaned up (but has the same delta), and only contains the actual changes that affect the package's behavior.
 
-Start a rebase from old/debian:
+We first start with rebase from old/debian:
 
-    $ git rebase -i lp1803562/old/debian
+    $ git rebase -i old/debian
 
 Now we do some cleaning:
 
 * Delete imports, etc
-* Delete changelog, maintainer
+* Delete any commit only changing metadata like changelog, maintainer
 * Possibly rearrange commits if it makes logical sense
 
 You should also squash these kinds of commits together:
@@ -351,27 +392,26 @@ To squash a commit, move its line underneath the one you want it to become part 
 
 At the end of the squash and clean phase, the only delta you should see from the split tag is:
 
-    $ git diff lp1803562/split/2%4.18-1ubuntu1 |diffstat
+    $ git diff split/2%4.18-1ubuntu1 |diffstat
      changelog |  762 --------------------------------------------------------------
-     control   |    3 
+     control   |    3
      2 files changed, 1 insertion(+), 764 deletions(-)
 
 Only changelog and control were changed, which is what we want.
 
 #### Create logical tag
-    
-What is the logical tag? 
+
+What is the logical tag?
 The logical tag is a representation of the Ubuntu delta present against a specific historical package version in Ubuntu.
 
-
-    $ git ubuntu tag --logical --bug 1803562
+    $ git ubuntu tag --logical
 
 This may fail with an error like: `ERROR:HEAD is not a defined object in this git repository.`, in which case [do it manually](#create-logical-tag-manually)
 
 
 ### Rebase onto New Debian
 
-    $ git rebase -i --onto lp1803562/new/debian lp1803562/old/debian
+    $ git rebase -i --onto new/debian old/debian
 
 #### Conflicts
 
@@ -379,7 +419,7 @@ If a conflict occurs, you must resolve it. We do so by modifying the conflicting
 
 An example, merging logwatch 7.5.0-1:
 
-    $ git rebase -i --onto lp1810928/new/debian lp1810928/old/debian
+    $ git rebase -i --onto new/debian old/debian
     ...
     CONFLICT (content): Merge conflict in debian/control
     error: could not apply c0efd06... - Drop libsys-cpu-perl and libsys-meminfo-perl from Recommends to
@@ -403,11 +443,11 @@ Continue with the rebase:
 
     $ git add debian/control
     $ git rebase --continue
-    
+
 #### Corollaries
 
 Mistake corrections are squashed.
-Changes that fix mistakes made previous in the same delta are squashed against them. 
+Changes that fix mistakes made previous in the same delta are squashed against them.
 
 For example:
 1. 2.3-4ubuntu1 was the previous merge.
@@ -415,7 +455,7 @@ For example:
 3. 2.3-4ubuntu3 fixed the typo in debian/rules to say “--build-better” instead.
 4. When the logical tag is created, there will be only one commit relating to –build-better, which omits any mention of the typo.
 
-Note: if a mistake exists in the delta itself, then it is retained. 
+Note: if a mistake exists in the delta itself, then it is retained.
 For example, if 2.3-4ubuntu3 was never uploaded and the typo is still present in 2.3-4ubuntu2, then logical/2.3.-4ubuntu2 should contain a commit adding the configure flag with the typo still present.
 
 
@@ -428,7 +468,7 @@ If a commit becomes empty, it's because the change has already been applied upst
 In such a case, the commit can be dropped.
 
     $ git rebase --abort
-    $ git rebase -i lp1803296/old/debian
+    $ git rebase -i old/debian
 
 Keep a copy of the unneeded commit's commit message, then delete it in the rebase.
 
@@ -480,7 +520,7 @@ Moreover, there is no need to add changelog entries for these changes manually. 
 
 ### Finish the Merge
 
-    $ git ubuntu merge finish ubuntu/devel --bug 1803296
+    $ git ubuntu merge finish ubuntu/devel
 
 * If this fails, [do it manually](#finish-the-merge-manually)
 
@@ -513,7 +553,7 @@ If you added any new changes, they should be in their own section in the changel
 
 Now you must rebase and squash the changelog changes into the "reconstruct-changelog" commit. Do a rebase with the new/debian tag:
 
-    $ git rebase -i lp1810928/new/debian
+    $ git rebase -i new/debian
 
 Change the order from:
 
@@ -534,19 +574,40 @@ Notice above that you must also change the `changelog` rebase command to `fixup`
 
 #### No changes to debian/changelog
 
-The range old/ubuntu..logical/<version> should contain no changes to debian/changelog at all. 
+The range old/ubuntu..logical/<version> should contain no changes to debian/changelog at all.
 We do not consider this part of the logical delta. So any commits that contain only changes to debian/changelog should be dropped.
 
-#### Tip 
-    
+#### Tip
+
 If you diff your final logical tag against the Ubuntu package it analyses, then the diff should be empty, except:
 1. All changes to debian/changelog: we deliberately exclude these from the logical tag, relying on commit messages instead.
-2. The change that “update-maintainer” introduced, and (rarely) similar changes like a change to Vcs-Git headers to point to an Ubuntu VCS instead.    
+2. The change that “update-maintainer” introduced, and (rarely) similar changes like a change to Vcs-Git headers to point to an Ubuntu VCS instead.
    For the purposes of this workflow, these are not considered part of our “logical delta”, and instead re-added at the end.
 
-    
+
+A brief summary of this phase/Cheat sheet
+-----------------------------------------
 
 
+1. `rmadison <package_name>`
+2. `rmadison -u debian <package_name>`
+3. `git ubuntu clone <package_name> <package_name>-gu`
+4. `cd <package_name>-gu`
+5. `git ubuntu merge start ubuntu/devel`
+6. `git checkout -b
+merge-<version_of_debian_unstable>-<current_ubuntu_devel_name>`
+7. `git log --stat old/debian..`
+8. `git ubuntu tag --split` -> if nothing to split, type that command
+straight away
+9. `git rebase -i old/debian`
+10. Drop metadata changes and reorder/merge/split commits.
+11. `git diff split/`
+12. `git ubuntu tag --logical`
+13. `git show logical/<version>` -> check if the new tag exists
+14. `git rebase -i --onto new/debian old/debian`
+15. `quilt push -a --fuzz=0`
+16. `quilt pop -a`
+17. `git ubuntu merge finish ubuntu/devel`
 
 
 Upload a PPA
@@ -600,14 +661,15 @@ Run the suggested command to push to your repository.
 
 #### Push your lp tags
 
-    $ git push kstenerud $(git tag |grep "^lp1802914" | xargs)
+$ git push <your-git-remote> old/ubuntu old/debian new/debian reconstruct/<version> logical/<version> split/<version>
+
     To ssh://git.launchpad.net/~kstenerud/ubuntu/+source/at
-     * [new tag]         lp1802914/split/3.1.20-3.1ubuntu2 -> lp1802914/split/3.1.20-3.1ubuntu2
-     * [new tag]         lp1802914/logical/3.1.20-3.1ubuntu2 -> lp1802914/logical/3.1.20-3.1ubuntu2
-     * [new tag]         lp1802914/new/debian -> lp1802914/new/debian
-     * [new tag]         lp1802914/old/debian -> lp1802914/old/debian
-     * [new tag]         lp1802914/old/ubuntu -> lp1802914/old/ubuntu
-     * [new tag]         lp1802914/reconstruct/3.1.20-3.1ubuntu2 -> lp1802914/reconstruct/3.1.20-3.1ubuntu2
+     * [new tag]         split/3.1.20-3.1ubuntu2 -> split/3.1.20-3.1ubuntu2
+     * [new tag]         logical/3.1.20-3.1ubuntu2 -> logical/3.1.20-3.1ubuntu2
+     * [new tag]         new/debian -> new/debian
+     * [new tag]         old/debian -> old/debian
+     * [new tag]         old/ubuntu -> old/ubuntu
+     * [new tag]         reconstruct/3.1.20-3.1ubuntu2 -> reconstruct/3.1.20-3.1ubuntu2
 
 
 ### Create a PPA
@@ -779,14 +841,14 @@ You can find the last import tag using `git log | grep "tag: pkg/import" | grep 
 
 So, we create the following tags:
 
-    $ git tag lp1802914/old/ubuntu pkg/ubuntu/disco-devel
-    $ git tag lp1802914/old/debian 9c3cf29c05c3fddd7359e71c978ff9a9a76e4404
-    $ git tag lp1802914/new/debian pkg/debian/sid
+    $ git tag old/ubuntu pkg/ubuntu/disco-devel
+    $ git tag old/debian 9c3cf29c05c3fddd7359e71c978ff9a9a76e4404
+    $ git tag new/debian pkg/debian/sid
 
 
 #### Start a rebase
 
-    $ git rebase -i lp1802914/old/debian
+    $ git rebase -i old/debian
 
 #### Clear any history prior to, and including the last debian version
 
@@ -796,7 +858,7 @@ In this case, up to, and including import of 3.1.20-3.1
 
 #### Create reconstruct tag
 
-    $ git ubuntu tag --reconstruct --bug 1802914
+    $ git ubuntu tag --reconstruct
 
 Next step: [Split Commits](#split-commits)
 
@@ -805,7 +867,7 @@ Next step: [Split Commits](#split-commits)
 
 Use the version number of the last ubuntu change. So if there are `3.1.20-3.1ubuntu1` and `3.1.20-3.1ubuntu2`, use `3.1.20-3.1ubuntu2`.
 
-    $ git tag -a -m "Logical delta of 3.1.20-3.1ubuntu2" lp1802914/logical/3.1.20-3.1ubuntu2
+    $ git tag -a -m "Logical delta of 3.1.20-3.1ubuntu2" logical/3.1.20-3.1ubuntu2
 
 Note: Certain characters aren't allowed in git. For example, `:` should be replaced with `%`.
 
@@ -816,9 +878,9 @@ Next step: [Rebase onto new debian](#rebase-onto-new-debian)
 
 Merge changelogs of old ubuntu and new debian:
 
-    $ git show lp1802914/new/debian:debian/changelog >/tmp/debnew.txt
-    $ git show lp1802914/old/ubuntu:debian/changelog >/tmp/ubuntuold.txt
-    $ merge-changelog /tmp/debnew.txt /tmp/ubuntuold.txt >debian/changelog 
+    $ git show new/debian:debian/changelog >/tmp/debnew.txt
+    $ git show old/ubuntu:debian/changelog >/tmp/ubuntuold.txt
+    $ merge-changelog /tmp/debnew.txt /tmp/ubuntuold.txt >debian/changelog
     $ git commit -m "Merge changelogs" debian/changelog
 
 Create new changelog entry for the merge:

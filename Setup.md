@@ -250,8 +250,8 @@ Replace the following:
 Template:
 
     # Name to use as override in .changes files for the Maintainer: field
-    # (mandatory, no default!).
-    $maintainer_name='Your Full Name <your@email.com>';
+    # (optional; only uncomment if needed).
+    # $maintainer_name='Your Full Name <your@email.com>';
 
     # Default distribution to build.
     $distribution = "focal";
