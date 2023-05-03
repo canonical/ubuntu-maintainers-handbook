@@ -32,6 +32,7 @@ Sections
  * Reviewing
    - [Reviewing Merge Proposals](MergeProposalReview.md)
    - [Bug Triage](BugTriage.md)
+   - [Doc Triage](DocTriage.md)
    - [Bug Report Responses](BugReportResponses.md)
  * Requesting Upload Rights
    - [PackageSet](MembershipInPackageSet.md)

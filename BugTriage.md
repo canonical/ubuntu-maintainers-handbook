@@ -292,8 +292,6 @@ always look at in this meeting:
 Future outlook:
 > as capacity permits we want in the future to start also having
 > a look at the [sponsoring queue](http://reqorts.qa.ubuntu.com/reports/sponsoring/index.html)
-> and (not yet sure if it will be weekly or part of daily triage) look at recent
-> feedback to our documentation using [dsctriage](https://snapcraft.io/dsctriage)
 
 
 ## Awareness of the Triage
@@ -308,7 +306,7 @@ summarizes how many bugs we've triaged and touches on the noteworthy
 cases. This can also be used to CC additional people that (for case
 specific reasons) should be aware of a case.
 An example of that would be if a security fix caused an upgrade-regression
-which would make us CC the uploader and/or ubuntu-security.
+which would make us CC the uploader and/or ubuntu-security. This mail should also contain the relevant information from [documentation triage](DocTriage.md).
 
 Furthermore on cases that need immediate attention or at least awareness
 we might:
