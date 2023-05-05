@@ -2,6 +2,23 @@
 
 In order to maintain a line of communication with the community and keep Ubuntu's documentation up to date, doc triage has been added as a task to do during [bug triage](BugTriage.md).
 
+## Tooling
+[Discourse Triage](https://snapcraft.io/dsctriage) is used for working with documentation hosted on Discourse. Documentation for the tool is located on [GitHub](https://github.com/lvoytek/discourse-triage). It can be installed with
+
+    sudo snap install dsctriage
+
+As a part of daily triage, running the base command will show relevant comments for the previous day or over the weekend.
+
+    dsctriage
+
+To run a previous day's triage, provide the relevant date or previous day of the week such as:
+
+    dsctriage 2023-04-27
+
+or
+
+    dsctriage friday
+
 ## Types of Updates
 
 Documentation updates fall into a few categories that require different levels of action. They are:
@@ -40,22 +57,3 @@ Documentation updates fall into a few categories that require different levels o
 
 * Team responses:  
   Responses to community comments by someone on the team will look the same as other comments. In this case, check to make sure the conversation was resolved, and provide extra input if needed.
-
-
-
-## Tooling
-[Discourse Triage](https://snapcraft.io/dsctriage) is used for working with documentation hosted on Discourse. Documentation for the tool is located on [GitHub](https://github.com/lvoytek/discourse-triage). It can be installed with
-
-    sudo snap install dsctriage
-
-As a part of daily triage, running the base command will show relevant comments for the previous day or over the weekend.
-
-    dsctriage
-
-To run a previous day's triage, provide the relevant date or previous day of the week such as:
-
-    dsctriage 2023-04-27
-
-or
-
-    dsctriage friday
