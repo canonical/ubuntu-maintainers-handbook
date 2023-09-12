@@ -278,6 +278,10 @@ Configure GnuPG for SBuild:
 $ sbuild-update --keygen
 ```
 
+Create an x86\_64 schroot:
+
+    $ mk-sbuild focal --arch=amd64
+
 > **Note**: 
 > For more info, see the [Ubuntu wiki page on SBuild](https://wiki.ubuntu.com/SimpleSbuild)
 
