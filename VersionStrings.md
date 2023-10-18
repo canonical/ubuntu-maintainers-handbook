@@ -86,13 +86,13 @@ After a version of Ubuntu is released, changes to packages follow a slightly dif
 The overall scheme stays the same for [Stable release updates](https://wiki.ubuntu.com/StableReleaseUpdates). One still only changes the _ubuntu revision_ section of `[upstream_version]-[debian_revision]ubuntu[ubuntu_revision]`.
 
 * Increment Y in the numeric `ubuntuX.Y` suffix, like: `ubuntu3.1 -> ubuntu3.2`.
-* If this is the first change via the SRU process, add the `.1` suffix, like: `ubuntu3 -> ubuntu3.1`.
+* If this is the first changeset via the SRU process, add the `.1` suffix, like: `ubuntu3 -> ubuntu3.1`.
 * If no `ubuntuX` was present before, then set `ubuntu0.1` which will represent that there was no Ubuntu delta (`0`) before this upload which is the first to add a change (`.1`).
 * If two releases have the same version, then this would make the package non upgradeable and cause a version conflict (two builds, but not the same). To resolve this, add the numeric `YY.MM` release version in between `ubuntuX` and the increment `.1`. For Jammy that might look like `...ubuntu3.22.04.1`
 
 Compare these examples with the _[adding a change in the current Ubuntu development release](VersionStrings.md#version-adding-a-change-in-the-current-ubuntu-development-release)_ section above to better see the subtle difference.
 
-> Example in detail: _Adding a change to `2.0-2` in a stable Ubuntu release will use `2.0-2ubuntu0.1`_
+> Example in detail: _Adding a change to `2.0-2` in a stable Ubuntu release will use `2.0-2ubuntu0.1`. This first .1 change must include any supplemental debian packaging changes or patches applicable to the stable release for this first SRU._
 
 > Example in detail: _Adding another change to `2.0-2ubuntu0.1` in a stable Ubuntu release will use `2.0-2ubuntu0.2`_
 
