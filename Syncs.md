@@ -1,6 +1,6 @@
 # Syncs
 
-If an Ubuntu package is the same as the Debian version, we have an automated
+If a Ubuntu package is the same as the Debian version, we have an automated
 mechanism that synchronises the Debian version to our Ubuntu series. 
 
 A **delta** represents the difference between the Ubuntu and Debian versions of
