@@ -93,9 +93,9 @@ The only change from the normal ubuntu version scheme is to the _ubuntu revision
 
 Compare these examples with the _[adding a change in the current Ubuntu development release](VersionStrings.md#version-adding-a-change-in-the-current-ubuntu-development-release)_ section above to better see the subtle difference.
 
-> Example in detail: _Adding a change to `2.0-2` in an Ubuntu stable release update will use `2.0-2ubuntu0.1`.
+> Example in detail: Adding a change to `2.0-2` in an Ubuntu stable release update will use `2.0-2ubuntu0.1`.
 
-> Example in detail: _Adding an Ubuntu delta to `2.0-2ubuntu2.4` in an Ubuntu stable release update will use `2.0-2ubuntu2.5`.
+> Example in detail: Adding an Ubuntu delta to `2.0-2ubuntu2.4` in an Ubuntu stable release update will use `2.0-2ubuntu2.5`.
 
 List of these and further related examples:
 
