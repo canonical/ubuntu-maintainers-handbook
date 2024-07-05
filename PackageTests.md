@@ -112,7 +112,7 @@ First, we will build the image we prepared in the previous section.
 * To build a container image:
 
   ```bash
-  $ autopkgtest-build-lxd images:ubuntu/impish/amd64
+  $ autopkgtest-build-lxd ubuntu-daily/oracular
   ```
 
   You should see an autopkgtest image now when you run `lxc image list`.
