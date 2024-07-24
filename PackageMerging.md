@@ -544,10 +544,10 @@ At the end of the "squash and clean" phase, the only delta you should see from
 the split tag is:
 
 ```bash
-$ git diff split/2%4.18-1ubuntu1 |diffstat
- changelog |  762 --------------------------------------------------------------
- control   |    3
- 2 files changed, 1 insertion(+), 764 deletions(-)
+$ git ubuntu  --stat split/6.8-0ubuntu2 
+ debian/changelog | 31 -------------------------------
+ debian/control   |  3 +--
+ 2 files changed, 1 insertion(+), 33 deletions(-)
 ```
 
 Only changelog and control were changed, which is what we want.
