@@ -31,7 +31,7 @@ following example with the container image you wish to use.
 From within the package repository:
 
 ```bash
-$ lxc launch images:ubuntu/focal builder \
+$ lxc launch ubuntu-daily:ubuntu/focal builder \
   && sleep 5 \
   && lxc exec builder -- mkdir -p /root/build/package \
   && tar cf - . | lxc exec builder -- tar xf - -C /root/build/package \

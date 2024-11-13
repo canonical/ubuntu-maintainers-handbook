@@ -104,7 +104,7 @@ have their own preferences. Here's a couple of options:
 To make a container for testing:
 
 ```bash
-$ lxc launch images:ubuntu/bionic tester
+$ lxc launch ubuntu-daily:ubuntu/bionic tester
 $ lxc exec tester -- bash
 ```
 

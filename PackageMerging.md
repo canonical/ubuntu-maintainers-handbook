@@ -947,7 +947,7 @@ Test the following:
 Example:
 
 ```bash
-$ lxc launch images:ubuntu/cosmic tester && lxc exec tester bash
+$ lxc launch ubuntu-daily:ubuntu/cosmic tester && lxc exec tester bash
 $ apt update && apt dist-upgrade -y && apt install -y at
 ```
 
@@ -984,7 +984,7 @@ $ echo "echo abc >test.txt" | at now + 1 minute && sleep 1m && cat test.txt && r
 ### Test installing the latest from scratch
 
 ```bash
-$ lxc launch images:ubuntu/cosmic tester && lxc exec tester bash
+$ lxc launch ubuntu-daily:ubuntu/cosmic tester && lxc exec tester bash
 $ add-apt-repository -y ppa:kstenerud/at-merge-lp1802914
 $ apt update && apt dist-upgrade -y && apt install at
 $ echo "echo abc >test.txt" | at now + 1 minute && sleep 1m && cat test.txt && rm test.txt

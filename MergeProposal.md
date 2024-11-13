@@ -31,7 +31,7 @@ PPA: ppa:kstenerud/postfix-fix-lp1753470-postconf-segfault
 
 Steps to test:
 
-# lxc launch images:ubuntu/bionic builder
+# lxc launch ubuntu-daily:ubuntu/bionic builder
 # lxc exec builder bash
 
 # apt dist-upgrade
