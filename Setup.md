@@ -25,7 +25,6 @@ sudo apt install -y \
     git-buildpackage \
     libvirt-daemon-system \
     pastebinit \
-    piuparts \
     pkg-config \
     quilt \
     sbuild-launchpad-chroot \
