@@ -181,7 +181,13 @@ style, such as:
 
 ```bash
 $ ppa_name="<package>-<type>-<lpbug>-<desc>"
+# or
+$ ppa_name="lp-<lpbug>-<package>-<desc>"
 ```
+
+It isn't important which you use, just be consistent.
+What is important though is that this has to be all lower case.
+Many of us even keep the associated git-ubuntu branch names consistent with the PPA names.
 
 So for example, you might have PPAs named `apache2-sru-lp12345678`, `clamav-fix-lp1920217`, and `clamav-fix-lp1920217-alternative`.
 
