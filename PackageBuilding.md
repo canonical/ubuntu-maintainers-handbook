@@ -2,58 +2,58 @@
 
 There are multiple ways to build a package, each with advantages and
 disadvantages. Which one you choose will depend on your circumstances.
+The most common path is building the source with `dpkg-buildpackage`
+followed by either `sbuild` for local builds or `dput` to upload
+to the Ubuntu Archive or a PPA.
 
-> **Note**: `git-ubuntu` no longer supports the build argument (neither for
-> source nor binary builds).
+## Download the orig tarball
 
-
-## (Optional) Download the orig tarball
-
-If you intend to use more manual methods like `sbuild` or `dpkg-buildpackage`
-directly, you will probably have to download the orig tarball first. You can
-do so by using:
+For almost anything you want to do, other than inspecting code, you'll
+need to download the orig tarball. If you are in a `git-ubuntu` based
+source tree, you can utilize its `export-orig` helper:
 
 ```bash
 $ git ubuntu export-orig
 ```
 
-It will try to use the `pristine-tar` branch to generate the tarball (and will
-likely fail), and then it will fallback to downloading the tarball directly
-from Launchpad. When it finishes, you should be able to see a link to the orig
-tarball at `../`.
+It will try to check the latest changelog stanza and use the `pristine-tar`
+branches to generate the tarball.
+This might fail if you e.g. go ahead or any other reason causing the tarball
+to not yet be imported into `git-ubuntu`.
+The common fallbacks would be to either download the tarball directly
+from Launchpad or Debian via `pull-lp-source` or `pull-debian-source`.
+If not even there the next step is to download the right one from upstream
+directly, if `d/watch` is defined potentially via `uscan --verbose` or
+manually on the upstream repository.
 
 ## Build source packages with `dpkg-buildpackage`
 
-This method will directly install any dependencies it needs to build, so it's
-recommended to create an LXD container to do the build. Replace `focal` in the
-following example with the container image you wish to use.
-
-From within the package repository:
+While you might want an even more clean environment, e.g. in a LXD container,
+for most cases it will be sufficient to use `dpkg-buildpackage` to build the
+source from within the package repository:
 
 ```bash
-$ lxc launch ubuntu-daily:ubuntu/focal builder \
-  && sleep 5 \
-  && lxc exec builder -- mkdir -p /root/build/package \
-  && tar cf - . | lxc exec builder -- tar xf - -C /root/build/package \
-  && lxc exec builder -- sh -c 'apt update \
-  && apt dist-upgrade -y \
-  && apt install -y ubuntu-dev-tools \
-  && cd /root/build \
-  && pull-debian-source -d $(grep "Source: " package/debian/control | sed "s/Source: \(.*\)/\1/g") $(grep "unstable; urgency=" package/debian/changelog |grep -v ubuntu|head -1|sed "s/.*(\(.*\)).*/\1/g") \
-  && cd /root/build/package \
-  && apt build-dep -y ./ \
-  && dpkg-buildpackage -S' \
-  && lxc exec builder -- tar cf - --exclude=package -C /root/build . | tar xf - -C .. \
-  &&
-$ lxc delete -f builder
+$ dpkg-buildpackage -S -I -i -nc -d
 ```
 
-Even though the recommended way to build a source package is to use a pristine
-environment inside an LXD container, you can also use `dpkg-buildpackage`'s
-`--no-check-builddeps` option and build the source package locally:
+Let us list the arguments used here
+
+* -S = --build=source - we want to build a source (.dsc, .changes)
+* -I = --tar-ignore - for the created tarball, without arguments it will add default exclude options to filter out unwanted files
+* -i = --diff-ignore - for the diff, without arguments it will add default exclude options to filter out unwanted files
+* -nc = --no-pre-clean - do not clean the tree before building
+* -d = --no-pre-clean - Do not check build dependencies and conflicts, ok as we only build the source
+
+When based on git-ubuntu branch and going for an upload to the Ubuntu Archive
+please also add the output of `git ubuntu prepare-upload args` which will add
+the arguments to allow `git-ubuntu` to properly reference back to this on
+importing the new version - thereby retaining the rich history of your branch.
+
+Therefore the final command from within the package repository for an
+upload to the Archive is:
 
 ```bash
-$ dpkg-buildpackage -S -I -i -nc --no-check-builddeps
+$ dpkg-buildpackage -S -I -i -nc -d $(git ubuntu prepare-upload args)
 ```
 
 
@@ -241,19 +241,30 @@ inbox.
 
 ## Build binary packages locally with `sbuild
 
-Assuming you have configured `sbuild` properly, you can use it to build the
-binary package:
+Assuming you [have configured `sbuild` properly](Setup-md#sbuild),
+you can use it to build the binary package. Usually you'd want to specify
+the following arguments:
+
+* set `DEB_BUILD_OPTIONS`, if nothing else then to gain some speed via `parallel=<number>`
+* -A = --arch-all - specify that you also want arch-all
+* -d = --dist - set the distribution for which you'd use a named schroot created in [sbuild](Setup-md#sbuild)
+* finally the `.dsc` file
+
+Before doing so it is also helpful to update the schroot to the latest
+state via `sudo sbuild-update -udcar <name of schroot>`
+
+Which overall means that you'd go `cd ..` one directory out of the source tree,
+to the directory where the `.dsc` got created when building the source and run:
 
 ```bash
-$ sbuild
+$ sudo sbuild-update -udcar <schroot>
+$ DEB_BUILD_OPTIONS="<options>" sbuild -Ad<schroot> <dsc file>
 ```
 
-Because of https://bugs.launchpad.net/launchpad/+bug/1699763, it is a good
-idea to disable the inclusion of `.buildinfo` files in the `*_source.changes`
- file:
-
+And more concrete asan example building qemu in noble with a concurrency of 3:
 ```bash
-$ sbuild --debbuildopts='--buildinfo-option=-O'
+$ sudo sbuild-update -udcar noble-proposed-amd64
+$ DEB_BUILD_OPTIONS="parallel=3" sbuild -Adnoble-proposed-amd64 qemu_8.2.2+ds-0ubuntu2.dsc
 ```
 
 For more information, see:
