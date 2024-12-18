@@ -159,11 +159,10 @@ $ dpkg-buildpackage -S -I -i -nc -d
 
 ### Create the PPA archive
 
-First, install `ppa-dev-tools` from its git repository:
+First, install `ppa-dev-tools` from the snap store:
 
 ```bash
-$ git clone git://git.launchpad.net/ppa-dev-tools
-$ cd ppa-dev-tools
+$ sudo snap install ppa-dev-tools
 ```
 
 Next, follow the directions in `INSTALL.md` to install prereqs and to install
