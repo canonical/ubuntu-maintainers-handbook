@@ -109,6 +109,37 @@ You can use `quilt`` to automatically add a DEP-3 header:
 $ quilt header -e --dep3 my-changes.patch
 ```
 
+### Best practice to maintain more easily over a long time
+
+These are not required, but can be rather helpful in packages with many
+patches and long patch series. Yet on the other hand it isn't hurting
+at all even in simple packages and so it can become muscle memory.
+
+First - To be able to quickly follow patches back to the bug without opening
+the file and reading the header. And furthermore to group sets of patches well
+the following pattern for the file name emerged:
+
+```
+debian/patches/lp-<bugnumber>-<patchindex>-<description>.patch`
+```
+
+The one case where this naming scheme can be harmful is that you'd usually
+not want to upstream this file name to Debian as the launchpad bug does
+not mean much there.
+
+There is yet another way that developers often need to travel, which is
+from the changelog to the patch file. Sure that can be determined by
+checking all the changed files in a commit, but it turns out to be rather
+helpful to make the associated changelog entry related to a patch that was
+added to follow the following pattern:
+
+```
+  - d/p/<patch-name>: <what was fixed> (LP: #<bugnumber>)
+```
+
+With both in place, even very complex packages are easy to navigate from
+changelog to patches and from files in `debian/patches/` to the
+associated bugs.
 
 ### Verify the patchfile
 
