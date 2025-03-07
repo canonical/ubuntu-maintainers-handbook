@@ -1,29 +1,31 @@
 Version string format
 =====================
 
-Selecting the right [version](https://manpages.ubuntu.com/manpages/man7/deb-version.7.html)
-can be quite complex as there are many conditions that need to be considered.
-The following paragraphs first link to the required basics, which are shared with Debian.
-Then each paragraph explains situations that might occur in an upload to Ubuntu.
+Choosing the appropriate [version](https://manpages.ubuntu.com/manpages/man7/deb-version.7.html) can be complex due to numerous conditions to consider. The following paragraphs first provide links to essential foundational information, shared with Debian. Subsequently, each paragraph addresses specific scenarios that may arise when uploading to Ubuntu.
+
 
 ## The Version field
 
-While Debian docs won't include Ubuntu specificities, it is helpful to fully read through [Debian control field "Version"](https://www.debian.org/doc/debian-policy/ch-controlfields.html#version) for overall topic awareness.
+Since Ubuntu's versioning specifics are derived from Debian, it is beneficial to begin by thoroughly reviewing the
+[Debian control field "Version"](https://www.debian.org/doc/debian-policy/ch-controlfields.html#version)
+to understand the foundational principles.
+The key takeaway is that Debian versions are formatted as `[upstream_version]-[debian_revision]`, using the `-` to split the upstream version from the Debian packaging revision.
 
-When Ubuntu adds a change or modification on top on what is in Debian, that change is expressed in the version number.
-One can think of a version number consisting of three segments: `[upstream_version]-[debian_revision]ubuntu[ubuntu_revision]`.
-The `-` splits the upstream version from the Debian packaging segment as you have seen in [Debian control field "Version"](https://www.debian.org/doc/debian-policy/ch-controlfields.html#version).
+When we modify a package compared to what's shipped by Debian, we indicate the change by adding 'ubuntu' to the Debian revision.
+One can think of a Ubuntu version number consisting of three components:
+`[upstream_version]-[debian_revision_component]ubuntu[ubuntu_revision_component]`.
 The `ubuntu` string then marks that whatever follows it is related to changes added in Ubuntu.
 
 This distinction allows each party involved in providing a package to the users — Upstream, Debian and Ubuntu — to modify and iterate on their section of the version number without interfering with others.
-When everyone abides by these conventions we can guarantee package upgradability, but also allow that one can derive a lot of the history by just looking at the package version.
+When everyone abides by these conventions we can guarantee package upgradability, but also allow that one can understand some of the package history by just looking at the package version.
+
 
 ## Version: Adding a change in the current Ubuntu development release
 
 As shown above `[upstream_version]-[debian_revision]ubuntu[ubuntu_revision]` is the basic pattern.
-Changes in the development release will always add or increment the number that directly follows the `ubuntu` string.
-Therefore, if this is the first Ubuntu change, one would append `ubuntu1` as an Ubuntu suffix.
-If there was already an Ubuntu change, one would increment the suffix like `ubuntu1 -> ubuntu2`.
+Changes within the development release require adding or incrementing the number immediately following the `ubuntu` string.
+Consequently, the first Ubuntu modification would have `ubuntu1` appended to the Debian revision.
+Subsequent Ubuntu changes would increment this suffix, i.e. `ubuntu1 -> ubuntu2`.
 
 Finally if formerly there has already been one (or many) _no change rebuilds_ there might be a `buildX` suffix which is in this case replaced by `ubuntu1`.
 More about this in the later section about _[no change rebuilds](VersionStrings.md#version-no-change-rebuilds)_.
