@@ -52,6 +52,27 @@ While these examples cover common scenarios, it's important to note that they ap
 Stable releases have different policies, but first we'll explore some special cases for development releases.
 
 
+## Version: Syncing from Debian
+
+Sometimes the desired change has already been packaged by Debian in a newer version of the package.
+
+During the Ubuntu development cycle, the archive tooling automatically copy or '[sync](Syncs.md#why-a-sync-is-better)' new package versions from Debian.
+Only packages with no Ubuntu modifications or those with no-change updates (i.e., versions with `build` rather than `ubuntu` in the revision), are automatically synced.
+If these updates pass Ubuntu's automated testing, they do not require manual intervention.
+However, there are scenarios where the automation cannot handle the process.
+
+First, once the development release reaches [Debian import freeze](https://wiki.ubuntu.com/DebianImportFreeze), the sync automation is disabled.
+Therefore, if an update from Debian *is* required, it must be [manually synced](Syncs.md).
+Version numbering in this case is trivial:  It's the exact same version as in Debian.
+
+A second case is when the package does have Ubuntu changes,
+but our modifications no longer need to be carried as Ubuntu delta with the new Debian package.
+For example, perhaps the Ubuntu changes were cherrypicked patches from upstream that are now available in a newer release now available from Debian,
+or perhaps Debian has adopted all of the Ubuntu changes into their own packaging.
+These situations will also require a [manual re-sync with Debian](Syncs.md).
+The version number also remains identical to Debian (see the 'Re-Sync w/ Debian' example in the previous section).
+
+
 ## Version: Merging from Debian
 
 If Ubuntu has delta to the package from Debian, it can not be
