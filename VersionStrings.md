@@ -15,6 +15,7 @@ When we modify a package compared to what's shipped by Debian, we indicate the c
 One can think of a Ubuntu version number consisting of three components:
 `[upstream_version]-[debian_revision_component]ubuntu[ubuntu_revision_component]`.
 The `ubuntu` string then marks that whatever follows it is related to changes added in Ubuntu.
+(`ubuntu` isn't the only string used here, but more on that shortly.)
 
 This distinction allows each party involved in providing a package to the users — Upstream, Debian and Ubuntu — to modify and iterate on their section of the version number without interfering with others.
 When everyone abides by these conventions we can guarantee package upgradability, but also allow that one can understand some of the package history by just looking at the package version.
@@ -27,23 +28,29 @@ Changes within the development release require adding or incrementing the number
 Consequently, the first Ubuntu modification would have `ubuntu1` appended to the Debian revision.
 Subsequent Ubuntu changes would increment this suffix, i.e. `ubuntu1 -> ubuntu2`.
 
-Finally if formerly there has already been one (or many) _no change rebuilds_ there might be a `buildX` suffix which is in this case replaced by `ubuntu1`.
-More about this in the later section about _[no change rebuilds](VersionStrings.md#version-no-change-rebuilds)_.
-
 > Example in detail: _Adding a change to `2.0-2` in the Ubuntu development release will use `2.0-2ubuntu1`_
 
 > Example in detail: _Adding another change to `2.0-2ubuntu1` in the Ubuntu development release will use `2.0-2ubuntu2`_
 
-List of these and further related examples:
+As alluded to earlier, there are a number of special cases, and situations where we use a string other than `ubuntu` in Ubuntu version numbers.
+One such case is `build`, typically used for _[no change rebuilds](VersionStrings.md#version-no-change-rebuilds)_ that will be discussed in more depth below.
+The key thing to know when incrementing from a `buildN` is that the package is considered unchanged from the debian revision component, and incremented as a *new* Ubuntu change.
 
-| Previous version             | Recommended version   |
-| ---------------------------- | --------------------- |
-| 2.0-2                        | 2.0-2ubuntu1          |
-| 2.0-2ubuntu1                 | 2.0-2ubuntu2          |
-| 2.0-2ubuntu2                 | 2.0-2ubuntu3          |
-| 2.0-2build2                  | 2.0-2ubuntu1          |
+Here's a listing of examples of the application of these rules:
 
-Note: While being the common case, please consider reading further about more special cases which can lead to different results.
+| Previous version             | Modification type | Recommended version   |
+| ---------------------------- | ----------------- | --------------------- |
+| 2.0-2                        | Ubuntu change     | 2.0-2ubuntu1          |
+| 2.0-2ubuntu1                 | Ubuntu change     | 2.0-2ubuntu2          |
+| 2.0-2ubuntu2                 | Ubuntu change     | 2.0-2ubuntu3          |
+| 2.0-3                        | Re-Sync w/ Debian | 2.0-3                 |
+| 2.0-3                        | No-change rebuild | 2.0-3build1           |
+| 2.0-3build1                  | No-change rebuild | 2.0-3build2           |
+| 2.0-3build2                  | Ubuntu change     | 2.0-3ubuntu1          |
+
+While these examples cover common scenarios, it's important to note that they apply specifically to the current Ubuntu development release.
+Stable releases have different policies, but first we'll explore some special cases for development releases.
+
 
 ## Version: Merging from Debian
 
