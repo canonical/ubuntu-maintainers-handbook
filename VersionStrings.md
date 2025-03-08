@@ -73,6 +73,44 @@ These situations will also require a [manual re-sync with Debian](Syncs.md).
 The version number also remains identical to Debian (see the 'Re-Sync w/ Debian' example in the previous section).
 
 
+## Version: No-change Rebuilds
+
+Sometimes a package has previously successfully synced into Ubuntu, and still does not require changes to the packaging or source code,
+but the generated binaries *do* require rebuilding against newer versions of dependencies.
+A common example of this is a library being updated to a newer ABI,
+such that a package depending on it needs re-linked in order to continue functioning properly.
+(The process of updating packages dependent on a changed library like this is called a ["transition"](Transitions.md).)
+
+Rebuilding is not considered a change that should prevent future syncing, so in this special case one would:
+
+* Not add `ubuntuX` and instead add a `buildX` suffix.
+* If there is already one such `buildX` suffix present, increment it.
+* If there is already an `ubuntuX` suffix there would be no auto-sync anyway, so increment the existing suffix.
+
+So far it is weakly defined if a no change rebuild for _[native packages](VersionStrings.md#version-native-packages)_ shall be a version increment or adding a `buildX` suffix.
+Both styles are present in the archive and both will work just fine.
+Until this is properly defined one should try to follow what the particular package used so far.
+
+> Example in detail: _A Debian package `2.0-2` needs a rebuild in Ubuntu which would use `2.0-2build1`_
+
+List of this and further related examples:
+
+| Previous version             | No change rebuild in devel    |
+| ---------------------------- | ----------------------------- |
+| 2.0-2                        | 2.0-2build1                   |
+| 2.0-2ubuntu2                 | 2.0-2ubuntu3                  |
+| 2.0-2build1                  | 2.0-2build2                   |
+| 2.0 (native in Ubuntu)       | 2.1 or 3 or 2.0build1         |
+| 2   (native in Ubuntu)       | 3 or 2build1                  |
+| 2.0 (native in Debian)       | 2.0build1                     |
+| 2   (native in Debian)       | 2build1                       |
+
+It is unlikely, but possible that one needs a no change rebuild as part of a [Stable release update](https://canonical-sru-docs.readthedocs-hosted.com),
+but in this situation auto-syncing isn't active anyway and the need for upgradability applies.
+So a no-change-rebuild in regard to picking a version number in this case is identical to any other change
+(see the section _[adding a change in Ubuntu as a stable release update](VersionStrings.md#version-adding-a-change-in-ubuntu-as-a-stable-release-update)_ above).
+
+
 ## Version: Merging from Debian
 
 If Ubuntu has delta to the package from Debian, it can not be
@@ -174,47 +212,6 @@ List of these and further related examples:
 | 2.0build2              | 2.0ubuntu1    |  2.0ubuntu0.1 |
 
 Note: The rule of multiple releases having the same version requiring to add also a per-release YY.MM to differentiate and ensure upgradability might apply here as well.
-
-## Version: no change rebuilds
-
-Ubuntu continuously [syncs](Syncs.md#why-a-sync-is-better) changes from Debian
-until the [Debian import freeze](https://wiki.ubuntu.com/DebianImportFreeze) date is met, then syncs are deactivated to stabilize the upcoming Ubuntu release.
-As outlined in these references there _"will be automatically imported from Debian where they have not been customized for Ubuntu, that is when the version number of the
-package in the current Ubuntu development branch does not contain the substring ubuntu"_.
-
-And as we learned in _[Adding a change in the current Ubuntu development release](VersionStrings.md#version-adding-a-change-in-the-current-ubuntu-development-release)_
-above adding a change in Ubuntu will add a `ubuntuX` suffix, which prevents the automatic synchronisation process, which thereby will ensure Ubuntu is not unintentionally losing these changes.
-
-But what if one needs to rebuild a package as-is, for example due to a library transition to build against new versions of other packages,
-but does not want to prevent future automatic syncing of new versions from Debian?
-Well, just rebuilding is not considered a change that has to be retained, so in this special case one would:
-
-* Not add `ubuntuX` and instead add a `buildX` suffix.
-* If there is already one such `buildX` suffix present, increment it.
-* If there is already an `ubuntuX` suffix there would be no auto-sync anyway, so increment the existing suffix.
-
-So far it is weakly defined if a no change rebuild for _[native packages](VersionStrings.md#version-native-packages)_ shall be a version increment or adding a `buildX` suffix.
-Both styles are present in the archive and both will work just fine.
-Until this is properly defined one should try to follow what the particular package used so far.
-
-> Example in detail: _A Debian package `2.0-2` needs a rebuild in Ubuntu which would use `2.0-2build1`_
-
-List of this and further related examples:
-
-| Previous version             | No change rebuild in devel    |
-| ---------------------------- | ----------------------------- |
-| 2.0-2                        | 2.0-2build1                   |
-| 2.0-2ubuntu2                 | 2.0-2ubuntu3                  |
-| 2.0-2build1                  | 2.0-2build2                   |
-| 2.0 (native in Ubuntu)       | 2.1 or 3 or 2.0build1         |
-| 2   (native in Ubuntu)       | 3 or 2build1                  |
-| 2.0 (native in Debian)       | 2.0build1                     |
-| 2   (native in Debian)       | 2build1                       |
-
-It is unlikely, but possible that one needs a no change rebuild as part of a [Stable release update](https://canonical-sru-docs.readthedocs-hosted.com),
-but in this situation auto-syncing isn't active anyway and the need for upgradability applies.
-So a no-change-rebuild in regard to picking a version number in this case is identical to any other change
-(see the section _[adding a change in Ubuntu as a stable release update](VersionStrings.md#version-adding-a-change-in-ubuntu-as-a-stable-release-update)_ above).
 
 
 ## Version: Backport from upstream
