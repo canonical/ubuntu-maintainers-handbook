@@ -244,7 +244,7 @@ Launchpad also sends "status updates" notification mails, so monitor your
 inbox.
 
 
-## Build binary packages locally with `sbuild
+## Build binary packages locally with `sbuild`
 
 Assuming you [have configured `sbuild` properly](Setup-md#sbuild),
 you can use it to build the binary package. Usually you'd want to specify
