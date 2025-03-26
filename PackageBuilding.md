@@ -42,7 +42,7 @@ Let us list the arguments used here
 * -I = --tar-ignore - for the created tarball, without arguments it will add default exclude options to filter out unwanted files
 * -i = --diff-ignore - for the diff, without arguments it will add default exclude options to filter out unwanted files
 * -nc = --no-pre-clean - do not clean the tree before building
-* -d = --no-pre-clean - Do not check build dependencies and conflicts, ok as we only build the source
+* -d = --no-check-builddeps - Do not check build dependencies and conflicts, ok as we only build the source
 
 When based on git-ubuntu branch and going for an upload to the Ubuntu Archive
 please also add the output of `git ubuntu prepare-upload args` which will add
