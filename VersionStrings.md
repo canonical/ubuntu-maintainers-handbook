@@ -95,15 +95,15 @@ Until this is properly defined one should try to follow what the particular pack
 
 List of this and further related examples:
 
-| Previous version             | No change rebuild in devel    |
-| ---------------------------- | ----------------------------- |
-| 2.0-2                        | 2.0-2build1                   |
-| 2.0-2ubuntu2                 | 2.0-2ubuntu3                  |
-| 2.0-2build1                  | 2.0-2build2                   |
-| 2.0 (native in Ubuntu)       | 2.1 or 3 or 2.0build1         |
-| 2   (native in Ubuntu)       | 3 or 2build1                  |
-| 2.0 (native in Debian)       | 2.0build1                     |
-| 2   (native in Debian)       | 2build1                       |
+| Previous version                          | No change rebuild in devel  |
+| ----------------------------------------- | --------------------------- |
+| 2.0-2                                     | 2.0-2build1                 |
+| 2.0-2ubuntu2                              | 2.0-2ubuntu3                |
+| 2.0-2build1                               | 2.0-2build2                 |
+| 2.0ubuntu0 (native in Ubuntu)             | 3.0ubuntu0 or 2.1ubuntu0    |
+| 2.0-0ubuntu1 (version is only in Ubuntu)  | 2.0-0ubuntu2                |
+| 2.0 (native in Debian)                    | 2.0build1                   |
+| 2   (native in Debian)                    | 2build1                     |
 
 It is unlikely, but possible that one needs a no change rebuild as part of a [Stable release update](https://canonical-sru-docs.readthedocs-hosted.com),
 but in this situation auto-syncing isn't active anyway and the need for upgradability applies.
@@ -187,32 +187,46 @@ To quote "Presence of the `debian_revision` part indicates this package is a non
 
 Due to that in a Debian native package, there is no `-debian_revision`.
 
-This continues into native Ubuntu packages, which have neither `-debian_revision` nor `ubuntu[ubuntu_revision]`.
-
 > Example in detail: _A package native to Debian `2.0` (no `-`), getting an Ubuntu change in the devel release would use `2.0ubuntu1`_
+
+This continues into _native Ubuntu packages_, which also do not have a `-debian_revision`.
+But remember that the package namespace is shared between Debian and Ubuntu, therefore a native Ubuntu package `foo` of version `1.0` could be overwritten if Debian ever adds `foo` > `1.0`.
+And that would even happen automatically via the [auto-sync](https://canonical-ubuntu-packaging-guide.readthedocs-hosted.com/en/latest/explanation/debian-merges-and-syncs/#sync).
+To avoid this, it is recommended to add a `..ubuntu0` suffix to the package.
+
+We'd also like to be able to differentiate between "a native Debian package that got a Ubuntu Delta added" which could be `2.0ubuntu1` and "a Ubuntu native package".
+Therefore the marker suffix for a native package shall be `..ubuntu0` and not itself be incremented.
 
 Furthermore native package versioning is package dependent; whether if it uses only _major_, or a _major.minor_, or any other version pattern is the maintainer's choice.
 Just as usually upstream can and will version software the way they consider the best.
 Due to that selecting the right subsequent version requires you to check the package history or confer with its maintainer.
 
-> Example in detail: _A package native to Ubuntu `2.0` (no `-` and no `ubuntuX`) getting an Ubuntu change in the devel release would use `2.1` or `3.0`_
+> Example in detail: _A package native to Ubuntu `2.0ubuntu0` (no `-` and `ubuntu0`) getting an Ubuntu change in the devel release could use `2.1ubuntu0` or `3.0ubuntu0`_
 
-Yes that means, from just the version, you can not differentiate between a _native Debian package that was synced_ and a _native package in Ubuntu._
+Lists of these and further related examples:
 
-List of these and further related examples:
+Native in Debian:
 
-| Previous version       | Devel upload  |  SRU upload   |
-| ---------------------- | ------------- | ------------- |
-| 2.0 (native in Debian) | 2.0ubuntu1    |  2.0ubuntu0.1 |
-| 2.0 (native in Ubuntu) | 2.1 or 3.0    |  2.0ubuntu0.1 |
-| 2   (native in Debian) | 2ubuntu1      |  2ubuntu0.1   |
-| 2   (native in Ubuntu) | 3             |  2ubuntu0.1   |
-| 2.0ubuntu2             | 2.0ubuntu3    |  2.0ubuntu2.1 |
-| 2.0build1              | 2.0ubuntu1    |  2.0ubuntu0.1 |
-| 2.0build2              | 2.0ubuntu1    |  2.0ubuntu0.1 |
+| Previous version             | Devel upload  |  SRU upload   |
+| -----------------------------| ------------- | ------------- |
+| 2.0                          | 2.0ubuntu1    |  2.0ubuntu0.1 |
+| 2                            | 2ubuntu1      |  2ubuntu0.1   |
+| 2.0build1                    | 2.0ubuntu1    |  2.0ubuntu0.1 |
+| 2.0build2                    | 2.0ubuntu1    |  2.0ubuntu0.1 |
+| 2ubuntu1 (got delta in -dev) | 2ubuntu2      |  2ubuntu1.1   |
+
+Native in Ubuntu:
+
+| Previous version  | Devel upload                |  SRU upload   |
+| ------------------| --------------------------- | ------------- |
+| 2.0ubuntu0        | 2.1ubuntu0 or 3.0ubuntu0    |  2.0ubuntu0.1 |
+| 2ubuntu0          | 3ubuntu0                    |  2ubuntu0.1   |
 
 Note: The rule of multiple releases having the same version requiring to add also a per-release YY.MM to differentiate and ensure upgradability might apply here as well.
 
+Note: There might be reasons that the maintainer wants the native Ubuntu package to not have a `..ubuntu0` suffix, for example if auto-sync overwriting it is desired.
+An example might be corodinated uploads to both Distributions in freeze times when the auto-sync is disabled.
+In any such case that deviates from the recommendation to have a `..ubuntu0` suffix should have an entry in `debian/README.source` that explains the reasoning, to allow fellow packagers to understand.
 
 ## Version: Backport from upstream
 
