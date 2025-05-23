@@ -1017,7 +1017,7 @@ $ echo "echo abc >test.txt" | at now + 1 minute && sleep 1m && cat test.txt && r
 ## Submit Merge Proposal (MP)
 
 > **NOTE**:
-> 
+>
 > Git branches with `%` in name don't work. Use something like `_`.
 
 ```bash
@@ -1026,21 +1026,24 @@ Your merge proposal is now available at: https://code.launchpad.net/~kstenerud/u
 If it looks OK, please move it to the 'Needs Review' state.
 ```
 
-Where `$REVIEWER` is the team (or user) on Launchpad that you need to look at
-your change, for instance `canonical-foundations`, `canonical-public-cloud`, or
-similar.
+`--reviewer` specifies the launchpad team/user to that should look at your change - by default it is `--reviewer ubuntu-sponsors`.
 
-**If you do not have upload rights for this package, use `ubuntu-sponsors`
-here.** This will add your Merge Proposal to the [Ubuntu sponsoring
-queue](http://sponsoring-reports.ubuntu.com/general.html) so people with upload
-rights for that package may eventually review it for you.
+You should set `--reviewer` to the team (or user) on Launchpad that should look at your change
+- **If you do not have upload rights for this package, use `ubuntu-sponsors` here.**
+  Doing so will add your Merge Proposal to the [Ubuntu sponsoring queue](http://sponsoring-reports.ubuntu.com/general.html), so people with upload rights for that package may eventually review it for you.
+- If you know which team should be notified, use e.g. `canonical-foundations`, `canonical-public-cloud`, `ubuntu-server`, ...
 
-Omitting the `--reviewer` field will request a review from the Ubuntu Server
-team. If you are unsure if your package should be reviewed by the Server team,
-please send it to the sponsoring queue instead (as described above).
+To avoid specifying the `--reviewer` flag, configure the reviewers ([for git-ubuntu](https://git.launchpad.net/git-ubuntu/commit/?id=56d1c9c470afd07bd8914337ec1f2004093fb599)).
+- Globally in your `.gitconfig`:
+```conf
+[gitubuntu.submit]
+    defaultReviewer = your-ubuntu-teamname, \
+                      canonical-more-reviewers, \
+                      canonical-otherteam
+```
+- If needed, for each repository: `git config gitubuntu.submit.defaultReviewer some-launchpad-reviewer,...`)
 
-* Using a target branch of `debian/sid` may seem wrong, but is a workaround
-  for LP: #1976112
+> Using a target branch of `debian/sid` may seem wrong, but is a workaround for LP: #1976112
 
 If this fails, [do it manually](#submit-merge-proposal-manually).
 
