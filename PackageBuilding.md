@@ -272,6 +272,17 @@ $ sudo sbuild-update -udcar noble-proposed-amd64
 $ DEB_BUILD_OPTIONS="parallel=3" sbuild -Adnoble-proposed-amd64 qemu_8.2.2+ds-0ubuntu2.dsc
 ```
 
+If the build is failing for some reason when running `sbuild`, you can use the
+`--build-failed-commands` option to get a shell inside of the chroot and
+investigate what is happening:
+```
+sbuild -Adnoble-proposed-amd64 qemu_8.2.2+ds-0ubuntu2.dsc --build-failed-commands=%SBUILD_SHELL
+```
+
+The [sbuild manpage](https://manpages.ubuntu.com/manpages/en/man1/sbuild.1.html)
+has more information on other commands which can be passed to this option,
+during the various build stages.
+
 > **Note**:
 > From Ubuntu 23.04 (Lunar Lobster), the `series-proposed` suite is [disabled by default](https://wiki.ubuntu.com/Testing/EnableProposed) via [APT Preferences](https://wiki.debian.org/AptConfiguration#apt_preferences_.28APT_pinning.29). This affects schroots created with `sbuild-launchpad-chroot`, so proposed packages [may not be used in the build process](https://bugs.launchpad.net/ubuntu/+source/sbuild-launchpad-chroot/+bug/1996205) in this case.
 
