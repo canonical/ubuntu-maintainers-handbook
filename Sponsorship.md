@@ -35,9 +35,10 @@ alternative approaches that may save you time or provide a better result.
 
 There are two formal ways to seek sponsorship, and one informal.
 
-The first is by filing a merge proposal with `canonical-<your-team>` (e.g.
-`canonical-server-reporter` for server team members) set as a reviewer. Make
-sure to mention in your MP comments that you're also in need of sponsorship.
+The first is by filing a [Merge Proposal (MP)](MergeProposal.md) with 
+`canonical-<your-team>` (e.g. `canonical-server-reporter` for server team 
+members) set as a reviewer. Make sure to mention in your MP comments that 
+you're also in need of sponsorship.
 If the reviewer has upload rights they can take care of sponsoring the upload
 as well.
 
