@@ -117,6 +117,7 @@ appropriate for the situation.
 
 ### Check for Build and Test
 
+* If a PPA build is provided, check if the PPA source package is the same as the one being proposed in the merge. Otherwise, this could lead to false negatives (e.g., the proposed merge FTBFS but the PPA build succeeds).
 * Verify that the PPA build is successful on all intended architectures.
 * If this is an SRU consider checking that the SRU template in the bug is OK. Test instructions especially are often only understandable for the reporter. We want them to be good before SRU review.
 * Where applicable, consider whether tests should be added, adapted, or extended to reflect the changes.
@@ -183,5 +184,6 @@ S = Skipped
   - [ ] autopkgtest against the PPA package passes (if possible, evidence was provided already)
   - [ ] Based on PPA builds and the build-log, no new component mismatch expected
   - [ ] Verified PPA package installs/uninstalls
+  - [ ] Verified PPA source package matches Merge Proposal source package
   - [ ] Verified function manually
 ```
