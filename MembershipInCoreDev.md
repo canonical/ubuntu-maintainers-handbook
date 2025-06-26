@@ -41,7 +41,7 @@ advanced packaging skills, and ideally direct experience with a few of them:
 * [Main inclusion](MainInclusion.md) for packages
 * [New package](https://wiki.ubuntu.com/UbuntuDevelopment/NewPackages) integration
 * [Transition](Transitions.md) of packages with new ABI/API requirements
-* [SRU special case exceptions](https://wiki.ubuntu.com/StableReleaseUpdates#Documentation_for_Special_Cases)
+* [SRU special case exceptions](https://documentation.ubuntu.com/sru/en/latest/reference/package-specific/)
 
 As with applications for [MOTU](MembershipInMOTU.md), trustworthiness is
 crucial for Core Dev. Being able to work with others, and especially
