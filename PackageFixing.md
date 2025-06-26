@@ -595,7 +595,7 @@ strategy for addressing (or skipping) it in LTS and other stable releases.
 ### SRU exceptions
 
 There is a particular kind of
-[special case SRU](https://wiki.ubuntu.com/StableReleaseUpdates#Documentation_for_Special_Cases)
+[special case SRU](https://documentation.ubuntu.com/sru/en/latest/reference/package-specific/)
 which is called either a Minor Release Exception (MRE) or an SRU exception. In
 the former we assume upstream is so stable and similar to our needs, process
 and philosophy that fewer checks need to be done, in the latter we admit that
@@ -608,7 +608,7 @@ stability, smooth upgradability, and other things important for an SRU.
 
 Each case is slightly different, which is why each of them gets their own
 discussion and their own accepted process listed in
-[SRU special cases](https://wiki.ubuntu.com/StableReleaseUpdates#Documentation_for_Special_Cases)
+[SRU special cases](https://documentation.ubuntu.com/sru/en/latest/reference/package-specific/)
 of how that particular minor release will be served.
 
 When we (in the server team) prepare special SRU updates they follow all the
