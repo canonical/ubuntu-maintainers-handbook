@@ -28,9 +28,7 @@ sudo apt install -y \
     pkg-config \
     quilt \
     sbuild-launchpad-chroot \
-    ubuntu-dev-tools \
-    uvtool \
-    virtinst && \
+    ubuntu-dev-tools && \
 sudo snap install lxd && \
 sudo snap install --classic snapcraft && \
 sudo snap install --classic ustriage && \

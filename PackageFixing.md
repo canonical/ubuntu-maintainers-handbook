@@ -104,51 +104,54 @@ have their own preferences. Here's a couple of options:
 To make a container for testing:
 
 ```bash
-$ lxc launch ubuntu-daily:ubuntu/bionic tester
-$ lxc exec tester -- bash
+$ lxc launch ubuntu-daily:bionic tester
 ```
 
-Or, to make a VM for testing:
+Alternatively, create a virtual machine (VM) for testing:
 
 ```bash
-$ uvt-simplestreams-libvirt \
- --verbose sync \
- --source http://cloud-images.ubuntu.com/daily release=bionic arch=amd64
-$ uvt-simplestreams-libvirt \
- --verbose sync release=bionic arch=amd64
-$ uvt-kvm create tester release=bionic arch=amd64 label=daily \
- --password ubuntu
-$ uvt-kvm wait tester
-$ uvt-kvm ssh tester
+$ lxc launch ubuntu-daily:bionic --vm tester
 ```
 
-> **Note**: The user's password in this `tester` VM will be "ubuntu"
+With both containers and VMs, you can use the `limits.memory` and `limits.cpu` options to configure available RAM or CPU cores.
+For example, to limit the available memory to 2GiB, and make 2 CPU cores available, add these parameters to the `lxc launch` command:
+
+```text
+-c limits.memory=2GiB -c limits.cpu=2
+```
+
+Log into the machine:
+
+```
+$ lxc exec tester -- sudo -i -u ubuntu
+```
+
+> **Note**: The "ubuntu" user's password is locked, but `sudo` can be run without password.
 
 #### Get up to date and install postfix:
 
 ```shell
-root@tester:~# apt dist-upgrade
-root@tester:~# apt install -y postfix
+ubuntu@tester:~$ sudo apt dist-upgrade
+ubuntu@tester:~$ sudo apt install -y postfix
 ```
 
 #### Tell postfix to use a map file:
 
 ```shell
-root@tester:~# echo "virtual_alias_maps = pgsql:/etc/postfix/valiases.cf" \
- >> /etc/postfix/main.cf
+ubuntu@tester:~$ echo "virtual_alias_maps = pgsql:/etc/postfix/valiases.cf" \
+ | sudo tee -a /etc/postfix/main.cf
 ```
 
 #### To reproduce, the file must be unreadable by the current user:
 
 ```shell
-root@tester:~# touch /etc/postfix/valiases.cf
-root@tester:~# chmod 0600 /etc/postfix/valiases.cf
+ubuntu@tester:~$ sudo touch /etc/postfix/valiases.cf
+ubuntu@tester:~$ sudo chmod 0600 /etc/postfix/valiases.cf
 ```
 
 #### Reproduce the issue:
 
 ```shell
-root@tester:~# su - ubuntu
 ubuntu@tester:~$ /usr/sbin/postconf virtual_alias_map
 Segmentation fault (core dumped)
 ```
