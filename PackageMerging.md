@@ -236,7 +236,7 @@ $ git fetch --all
 From within the git source tree:
 
 ```bash
-git ubuntu merge start pkg/ubuntu/devel
+git ubuntu merge start --bug=XXX pkg/ubuntu/devel
 ```
 
 This will generate the following tags for you:
@@ -497,7 +497,7 @@ can be verified with `git diff -p old/ubuntu`.
 Note: Do this even if there were no commits to split.
 
 ```bash
-$ git ubuntu tag --split
+$ git ubuntu tag --split --bug=XXX
 ```
 
 #### Purpose of logical tag
@@ -558,7 +558,7 @@ What is the logical tag? It is a representation of the Ubuntu delta present
 against a specific historical package version in Ubuntu.
 
 ```bash
-$ git ubuntu tag --logical
+$ git ubuntu tag --logical --bug=XXX
 ```
 
 This may fail with an error like: `ERROR:HEAD is not a defined object in this
@@ -812,21 +812,21 @@ In the original shell you should see something like
 1. `rmadison -u debian <package_name>`
 1. `git ubuntu clone <package_name> <package_name>-gu`
 1. `cd <package_name>-gu`
-1. `git ubuntu merge start pkg/ubuntu/devel`
+1. `git ubuntu merge start --bug=XXX pkg/ubuntu/devel`
 1. `git checkout -b
 merge-<version_of_debian_unstable>-<current_ubuntu_devel_name>`
 1. `git log --stat old/debian..`
-1. `git ubuntu tag --split` -> if nothing to split, type that command
+1. `git ubuntu tag --split --bug=XXX` -> if nothing to split, type that command
 straight away
 1. `git rebase -i old/debian`
 1. Drop metadata changes and reorder/merge/split commits.
 1. `git diff split/`
-1. `git ubuntu tag --logical`
+1. `git ubuntu tag --logical --bug=XXX`
 1. `git show logical/<version>` -> check if the new tag exists
 1. `git rebase -i --onto new/debian old/debian`
 1. `quilt push -a --fuzz=0`
 1. `quilt pop -a`
-1. `git ubuntu merge finish pkg/ubuntu/devel`
+1. `git ubuntu merge finish --bug=XXX pkg/ubuntu/devel`
 
 ## Upload a PPA
 
