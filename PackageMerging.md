@@ -720,7 +720,7 @@ described below.
 ### Finish the merge
 
 ```bash
-$ git ubuntu merge finish pkg/ubuntu/devel
+$ git ubuntu merge finish --bug=XXX pkg/ubuntu/devel
 ```
 
 If this fails, [do it manually](#finish-the-merge-manually).
