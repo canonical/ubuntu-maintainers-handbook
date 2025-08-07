@@ -239,13 +239,16 @@ From within the git source tree:
 git ubuntu merge start --bug=XXX pkg/ubuntu/devel
 ```
 
+If the `--bug` flag is passed, the branches and command will be preceded by
+`lpXXX/`, where XXX is your bug ticket number.
+
 This will generate the following tags for you:
 
-| Tag          | Source                                                               |
-| ------------ | -------------------------------------------------------------------- |
-| `old/ubuntu` | ubuntu/devel                                                         |
-| `old/debian` | last import tag prior to old/ubuntu without ubuntu suffix in version |
-| `new/debian` | debian/sid                                                           |
+| Tag                  | Source                                                               |
+| -------------------- | -------------------------------------------------------------------- |
+| `<lpXXX/>old/ubuntu` | ubuntu/devel                                                         |
+| `<lpXXX/>old/debian` | last import tag prior to old/ubuntu without ubuntu suffix in version |
+| `<lpXXX/>new/debian` | debian/sid                                                           |
 
 If `git ubuntu merge start` fails, [do it manually](#start-a-merge-manually).
 
@@ -302,13 +305,13 @@ Get all commit hashes since old/debian and check the summary for what they
 changed, using:
 
 ```bash
-git log --stat old/debian..
+git log --stat <lpXXX/>old/debian..
 ```
 
 Example: (comes from merging `heimdal` package)
 
 ```bash
-git log --stat old/debian..
+git log --stat <lpXXX/>old/debian..
 ```
 
 ```text
@@ -420,10 +423,10 @@ In this case, we have the following file changes to separate into logical units:
 
 #### Split out logical commits
 
-Start a rebase at `old/debian`, and then reset to `HEAD^` to bring back the
+Start a rebase at `<lpXXX/>old/debian`, and then reset to `HEAD^` to bring back the
 changes as uncommitted changes.
 
-1. Start a rebase: `git rebase -i old/debian`
+1. Start a rebase: `git rebase -i <lpXXX/>old/debian`
 1. Change the commit(s) you're going to split from `pick` to `edit`.
 1. Do a `git reset` to get your changes back: `git reset HEAD^`
 
@@ -490,7 +493,7 @@ undocumented changes).
 
 It should represent a broken-out history (viewable with `git-log`) for the
 latest Ubuntu version and no content differences to that Ubuntu version. This
-can be verified with `git diff -p old/ubuntu`.
+can be verified with `git diff -p <lpXXX/>old/ubuntu`.
 
 #### Tag split
 
@@ -518,10 +521,10 @@ In this phase, we make a clean, "logical" view of the history. This history is
 cleaned up (but has the same delta), and only contains the actual changes that
 affect the package's behaviour.
 
-We first start with a rebase from `old/debian`:
+We first start with a rebase from `<lpXXX/>old/debian`:
 
 ```bash
-$ git rebase -i old/debian
+$ git rebase -i <lpXXX/>old/debian
 ```
 
 Now we do some cleaning:
@@ -544,7 +547,7 @@ At the end of the "squash and clean" phase, the only delta you should see from
 the split tag is:
 
 ```bash
-$ git diff --stat split/6.8-0ubuntu2 
+$ git diff --stat <lpXXX/>split/6.8-0ubuntu2
  debian/changelog | 31 -------------------------------
  debian/control   |  3 +--
  2 files changed, 1 insertion(+), 33 deletions(-)
@@ -567,7 +570,7 @@ git repository.`, in which case [do it manually](#create-logical-tag-manually).
 ### Rebase onto new Debian
 
 ```bash
-$ git rebase -i --onto new/debian old/debian
+$ git rebase -i --onto <lpXXX/>new/debian <lpXXX/>old/debian
 ```
 
 #### Conflicts
@@ -578,7 +581,7 @@ conflicting commit during the rebase.
 An example, merging `logwatch 7.5.0-1`:
 
 ```bash
-$ git rebase -i --onto new/debian old/debian
+$ git rebase -i --onto <lpXXX/>new/debian <lpXXX/>old/debian
 ...
 CONFLICT (content): Merge conflict in debian/control
 error: could not apply c0efd06... - Drop libsys-cpu-perl and libsys-meminfo-perl from Recommends to
@@ -646,7 +649,7 @@ In such a case, the commit can be dropped.
 
 ```bash
 $ git rebase --abort
-$ git rebase -i old/debian
+$ git rebase -i <lpXXX/>old/debian
 ```
 
 Keep a copy of the redundant commit's commit message, then delete it in the
@@ -720,8 +723,11 @@ described below.
 ### Finish the merge
 
 ```bash
-$ git ubuntu merge finish pkg/ubuntu/devel
+$ git ubuntu merge finish --bug=XXX pkg/ubuntu/devel
 ```
+
+Do note that `--bug=XXX` is only needed if you started the merge by also
+passing this flag.
 
 If this fails, [do it manually](#finish-the-merge-manually).
 
