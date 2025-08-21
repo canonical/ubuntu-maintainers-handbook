@@ -291,7 +291,7 @@ upstream.
 
 
 
-### **Backport Tarball-only into Existing Stable Packaging** ###
+### **4.2. Backport Tarball-only into Existing Stable Packaging**
 
 This method involves updating the source package in a stable release by
 swapping its orig tarball out with a newer one while largely retaining
@@ -349,9 +349,9 @@ debian/changelog entry.
     gpg --verify ../${tarball}.asc ../${tarball}
     # Also verify checksum:
     sha3sum -c ../${tarball}.sha3-512 --ignore-missing # Or other checksum tool
-   ```
+    ```
 
-2. Checkout the Target Release and Create New Branch:
+2. **Checkout the Target Release and Create New Branch:**
    First, ensure your local git-ubuntu repository is up-to-date and you are on your backport branch.
    ```
    cd ${package}-gu
@@ -360,7 +360,7 @@ debian/changelog entry.
    git checkout --no-track pkg/ubuntu/${codename}-devel -b ${branch_name}
    ```
 
-3. Prepare for Tarball Import:
+3. **Prepare for Tarball Import:**
    Remove all existing source files in the working directory, keeping
    only the debian/ directory and .git information.
    ```
@@ -390,7 +390,7 @@ debian/changelog entry.
      (debian/control), build rules (debian/rules), or patches
      (debian/patches).
 
-6. Verify Existing Patches Apply Cleanly:
+6. **Verify Existing Patches Apply Cleanly:**
    Use quilt to check and manage patches.
    ```
    quilt push -a && quilt pop -a
@@ -405,7 +405,7 @@ debian/changelog entry.
      [Applied in upstream release ${version}]
      ```
 
-7. Check Debian for Relevant Changes:
+7. **Check Debian for Relevant Changes:**
    If the new upstream version is already packaged in Debian, review
    their debian/ directory for any interesting changes or adaptations
    they've made. Apply these as appropriate, ensuring they do not enable
@@ -563,6 +563,7 @@ Prepare for PPA build:
   ppa_address="ppa:<your-launchpad-id>/${package}-backport-lp${lp_bug_number}"
   changes_file="../${package}_${new_version}~${codename}1_source.changes"
   dput ${ppa_address} ${changes_file}
+  ```
 
 
 6. Testing and Quality Assurance
