@@ -3,6 +3,14 @@ Version string format
 
 Choosing the appropriate [version](https://manpages.ubuntu.com/manpages/man7/deb-version.7.html) can be complex due to numerous conditions to consider. The following paragraphs first provide links to essential foundational information, shared with Debian. Subsequently, each paragraph addresses specific scenarios that may arise when uploading to Ubuntu.
 
+## Testing
+
+To test the ordering of your constructed version, use `dpkg`. Available comparisons are: `lt` `le` `eq` `ne` `ge` `gt`.
+
+```console
+$ dpkg --compare-versions 1.2.3-3ubuntu1 lt 1.2.4-2ubuntu2   && echo true || echo false
+```
+
 
 ## The Version field
 
