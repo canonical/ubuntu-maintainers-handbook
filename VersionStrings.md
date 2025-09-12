@@ -103,15 +103,15 @@ Until this is properly defined one should try to follow what the particular pack
 
 List of this and further related examples:
 
-| Previous version                          | No change rebuild in devel  |
-| ----------------------------------------- | --------------------------- |
-| 2.0-2                                     | 2.0-2build1                 |
-| 2.0-2ubuntu2                              | 2.0-2ubuntu3                |
-| 2.0-2build1                               | 2.0-2build2                 |
-| 2.0ubuntu0 (native in Ubuntu)             | 3.0ubuntu0 or 2.1ubuntu0    |
-| 2.0-0ubuntu1 (version is only in Ubuntu)  | 2.0-0ubuntu2                |
-| 2.0 (native in Debian)                    | 2.0build1                   |
-| 2   (native in Debian)                    | 2build1                     |
+| Previous version                          | No change rebuild in devel   |
+| ----------------------------------------- | ---------------------------- |
+| 2.0-2                                     | 2.0-2build1                  |
+| 2.0-2ubuntu2                              | 2.0-2ubuntu3                 |
+| 2.0-2build1                               | 2.0-2build2                  |
+| 2.0-0ubuntu1 (version is only in Ubuntu)  | 2.0-0ubuntu2                 |
+| 2.0ubuntu (native in Ubuntu)              | 2.0ubuntubuild1 or 2.1ubuntu |
+| 2.0 (native in Debian)                    | 2.0build1                    |
+| 2   (native in Debian)                    | 2build1                      |
 
 It is unlikely, but possible that one needs a no change rebuild as part of a [Stable release update](https://canonical-sru-docs.readthedocs-hosted.com),
 but in this situation auto-syncing isn't active anyway and the need for upgradability applies.
@@ -184,8 +184,8 @@ List of these and further related examples:
 | 2.0-2build1                  | 2.0-2ubuntu0.1                                |
 | 2.0                          | 2.0ubuntu0.1                                  |
 | 2.0-2ubuntu0.22.04.1         | 2.0-2ubuntu0.22.04.2                          |
-| 2.0-2 in two releases        | 2.0-2ubuntu0.11.10.1 and 2.0-2ubuntu0.22.04.1 |
-| 2.0-2ubuntu1 in two releases | 2.0-2ubuntu1.11.10.1 and 2.0-2ubuntu1.22.04.1 |
+| 2.0-2 in two releases        | 2.0-2ubuntu0.20.04.1 and 2.0-2ubuntu0.22.04.1 |
+| 2.0-2ubuntu1 in two releases | 2.0-2ubuntu1.20.04.1 and 2.0-2ubuntu1.22.04.1 |
 
 ## Version: native packages
 
@@ -198,18 +198,18 @@ Due to that in a Debian native package, there is no `-debian_revision`.
 > Example in detail: _A package native to Debian `2.0` (no `-`), getting an Ubuntu change in the devel release would use `2.0ubuntu1`_
 
 This continues into _native Ubuntu packages_, which also do not have a `-debian_revision`.
-But remember that the package namespace is shared between Debian and Ubuntu, therefore a native Ubuntu package `foo` of version `1.0` could be overwritten if Debian ever adds `foo` > `1.0` (If not blocked the newer according to `dpkg --compare-versions` will be synced).
+But remember that the package namespace is shared between Debian and Ubuntu, therefore a native Ubuntu package `foo` of version `1.0` could be overwritten if Debian ever adds `foo` > `1.0` (If not blocked, the newer version according to `dpkg --compare-versions` will be synced).
 And that would even happen automatically via the [auto-sync](https://canonical-ubuntu-packaging-guide.readthedocs-hosted.com/en/latest/explanation/debian-merges-and-syncs/#sync).
-To avoid this, it is recommended to add a `ubuntu0` suffix to the package.
+To avoid this, it is recommended to add a `ubuntu` suffix to the package.
 
 We'd also like to be able to differentiate between "a native Debian package that got an Ubuntu Delta added" which could be `2.0ubuntu1`, and "a native Ubuntu package".
-Therefore the marker suffix for a native package shall be `ubuntu0` and not itself be incremented.
+Therefore the marker suffix for a native package shall be `ubuntu` and not itself be incremented.
 
 Furthermore native package versioning is package dependent; whether if it uses only _major_, or a _major.minor_, or any other version pattern is the maintainer's choice.
 Just as usually upstream can and will version software the way they consider the best.
 Due to that selecting the right subsequent version requires you to check the package history or confer with its maintainer.
 
-> Example in detail: _A package native to Ubuntu `2.0ubuntu0` (no `-` and `ubuntu0`) getting an Ubuntu change in the devel release could use `2.1ubuntu0` or `3.0ubuntu0`_
+> Example in detail: _A package native to Ubuntu `2.0ubuntu` (no `-` and `ubuntu`) getting an Ubuntu change in the devel release could use `2.1ubuntu` or `3.0ubuntu`_
 
 Lists of these and further related examples:
 
@@ -225,16 +225,16 @@ Native in Debian:
 
 Native in Ubuntu:
 
-| Previous version  | Devel upload                |  SRU upload   |
-| ------------------| --------------------------- | ------------- |
-| 2.0ubuntu0        | 2.1ubuntu0 or 3.0ubuntu0    |  2.0ubuntu0.1 |
-| 2ubuntu0          | 3ubuntu0                    |  2ubuntu0.1   |
+| Previous version               | Devel upload                     | SRU upload                                |
+| -------------------------------| -------------------------------- | ----------------------------------------- |
+| 2.0ubuntu                      | 2.1ubuntu or 3.0ubuntu           | 2.0ubuntu0.1                              |
+| 2ubuntu                        | 3ubuntu                          | 2ubuntu0.1                                |
+| 3.1.2ubuntubuild10             | 3.1.3ubuntu                      | 3.1.3ubuntu0.1                            |
+| `2ubuntu` in multiple releases | `3ubuntu` or `3ubuntu~26.04.1`   | `3ubuntu~25.10.1` and `3ubuntu~25.04.1`   |
 
-Note: The rule of multiple releases having the same version requiring to add also a per-release YY.MM to differentiate and ensure upgradability might apply here as well.
-
-Note: There might be reasons that the maintainer wants the native Ubuntu package to not have a `ubuntu0` suffix, for example if overwriting via auto-sync is desired.
+Note: There might be reasons that the maintainer wants the native Ubuntu package to not have a `ubuntu` suffix, for example if overwriting via auto-sync is desired.
 An example might be coordinated uploads to both Distributions in freeze times when the auto-sync is disabled.
-In any such case that deviates from the recommendation to have a `ubuntu0` suffix, the package should have an entry in `debian/README.source` that explains the reasoning, to allow fellow packagers to understand.
+In any such case that deviates from the recommendation to have a `ubuntu` suffix, the package should have an entry in `debian/README.source` that explains the reasoning, to allow fellow packagers to understand.
 If the deviation is expected to not last very long, for example to be resolved in the next Ubuntu development cycle, then a note in debian/changelog is sufficient.
 
 ## Version: Backport from upstream
