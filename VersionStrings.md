@@ -33,7 +33,7 @@ Subsequent Ubuntu changes would increment this suffix, i.e. `ubuntu1 -> ubuntu2`
 > Example in detail: _Adding another change to `2.0-2ubuntu1` in the Ubuntu development release will use `2.0-2ubuntu2`_
 
 As alluded to earlier, there are a number of special cases, and situations where we use a string other than `ubuntu` in Ubuntu version numbers.
-One such case is `build`, typically used for _[no change rebuilds](VersionStrings.md#version-no-change-rebuilds)_ that will be discussed in more depth below.
+One such case is `build`, typically used for _[no change rebuilds](#version-no-change-rebuilds)_ that will be discussed in more depth below.
 The key thing to know when incrementing from a `buildN` is that the package is considered unchanged from the debian revision component, and incremented as a *new* Ubuntu change.
 
 Here's a listing of examples of the application of these rules:
@@ -87,7 +87,7 @@ Rebuilding is not considered a change that should prevent future syncing, so in 
 * If there is already one such `buildX` suffix present, increment it.
 * If there is already an `ubuntuX` suffix there would be no auto-sync anyway, so increment the existing suffix.
 
-So far it is weakly defined if a no change rebuild for _[native packages](VersionStrings.md#version-native-packages)_ shall be a version increment or adding a `buildX` suffix.
+So far it is weakly defined if a no change rebuild for _[native packages](#version-native-packages)_ shall be a version increment or adding a `buildX` suffix.
 Both styles are present in the archive and both will work just fine.
 Until this is properly defined one should try to follow what the particular package used so far.
 
@@ -108,7 +108,7 @@ List of this and further related examples:
 It is unlikely, but possible that one needs a no change rebuild as part of a [Stable release update](https://canonical-sru-docs.readthedocs-hosted.com),
 but in this situation auto-syncing isn't active anyway and the need for upgradability applies.
 So a no-change-rebuild in regard to picking a version number in this case is identical to any other change
-(see the section _[adding a change in Ubuntu as a stable release update](VersionStrings.md#version-adding-a-change-in-ubuntu-as-a-stable-release-update)_ above).
+(see the section _[adding a change in Ubuntu as a stable release update](#version-adding-a-change-in-ubuntu-as-a-stable-release-update)_ above).
 
 
 ## Version: Merging from Debian
@@ -159,7 +159,7 @@ The only change from the normal ubuntu version scheme is to the _ubuntu revision
 * If no `ubuntuX` was present before, then set `ubuntu0.1` which will represent that there was no Ubuntu delta (`0`) before this upload which is the first to add a change (`.1`).
 * If two releases have the same version, then this would make the package non upgradeable and cause a version conflict (two builds, but not the same). To resolve this, add the numeric `YY.MM` release version in between `ubuntuX` and the increment `.1`. For Jammy that suffix might look like `ubuntu3.22.04.1`
 
-Compare these examples with the _[adding a change in the current Ubuntu development release](VersionStrings.md#version-adding-a-change-in-the-current-ubuntu-development-release)_ section above to better see the subtle difference.
+Compare these examples with the _[adding a change in the current Ubuntu development release](#version-adding-a-change-in-the-current-ubuntu-development-release)_ section above to better see the subtle difference.
 
 > Example in detail: Adding a change to `2.0-2` in an Ubuntu stable release update will use `2.0-2ubuntu0.1`.
 
