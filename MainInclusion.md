@@ -11,9 +11,8 @@ For example, the `apache2` package is in main, and supported by the Ubuntu
 Server Team, so in Launchpad the `~ubuntu-server` team has a team bug
 subscription on the `apache2` package.
 
-See the Ubuntu wiki page on the
-[main inclusion process](https://wiki.ubuntu.com/MainInclusionProcess) for
-general details about main inclusion in Ubuntu.
+See the [Main Inclusion Review process](https://canonical-ubuntu-project.readthedocs-hosted.com/MIR/main-inclusion-review/)
+for general details about main inclusion in Ubuntu.
 
 ## Ubuntu Server team subscription maintenance
 

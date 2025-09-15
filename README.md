@@ -6,7 +6,7 @@ for working with Ubuntu packages.
 
 If you are interested in contributing to Ubuntu, you may want to attain certain
 uploading rights. For guidance on where to start, check out the
-[path to upload rights](Reference/PathToUploadRights.md) page.
+[path to upload rights](PathToUploadRights.md) page.
 
 Note that this isn't a policy document; the official policies will be linked to
 where possible and should be referenced for the officially correct ways to do
@@ -63,8 +63,9 @@ working knowledge of one robust process for accomplishing work items.
 * [MembershipInMOTU](MembershipInMOTU.md)
 * [MembershipInCoreDev](MembershipInCoreDev.md)
 
-### Quick References
+## Quick References
 
-* [Check Lists](CheckListsSheets.md)
-     + [Bug Fix Checklist](BugFixingCheckList.md)
+### Checklists and templates
+
+* [Bug Fix Checklist](BugFixingCheckList.md)
 
