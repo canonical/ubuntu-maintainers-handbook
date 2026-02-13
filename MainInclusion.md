@@ -56,9 +56,7 @@ review from `~canonical-server-reporter`.
 If in doubt, please file a merge proposal anyway.
 
 Once a change has landed into the git repository, a cron job will automatically
-enact the change in Launchpad itself within 24 hours. All automated changes
-made are logged to the
-[ubuntu-server mailing list](https://lists.ubuntu.com/mailman/listinfo/ubuntu-server).
+enact the change in Launchpad itself within 24 hours.
 
 ### Reviewing a merge proposal to change the set of supported packages
 
