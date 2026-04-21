@@ -244,20 +244,29 @@ When the bug no longer meets these criteria, we unsubscribe from it.
 
 ### Tagging `server-todo`
 
-This is our tag, which we use to represent "valid and we should work on it".
-I.e., better than just the usual "valid" backlog.
+Our team slug in the [Canonical team tags](https://documentation.ubuntu.com/project/contributors/bug-triage/bug-tags/#canonical-team-tags)
+is "server" and therefore we expect `server-todo`, `server-freezer`,
+and the general `rls-$$-incoming`.
+
+While the usage of `server-freezer` and `rls-$$-incoming` is possible,
+we will see it in triage as recent change, we ourselves not use these
+two much.
+
+The central tag, which we use to represent "valid and we should work on it"
+is `server-todo`. I.e., it means better and/or more actionable than just
+the usual "valid" backlog.
 
 We want to assign bugs from this queue regularly. To avoid losing traction
 there is a weekly bug housekeeping meeting (see below) to ensure no bug gets
 blocked or forgotten for too long.
 
-The goal is to have this list at around 30-40 bugs most of the time. If it
+The goal is to have this list at around 10-20 bugs most of the time. If it
 drops lower, we can refill the list with candidates from the `~ubuntu-server`
-subscribed bugs. However, if the list grows significantly out of this range it
-becomes unrealistic to expect those issues to be handled in time, and we
-should communicate that to the reporters.
+subscribed or `server-freezer` bugs. However, if the list grows significantly
+out of this range it becomes unrealistic to expect those issues to be handled
+in time, and we should communicate that to the reporters.
 
-Qualification for `server-todo`:
+Our detailed qualification for `server-todo`:
 
 * Whatever we think that we want to work on soon. For example:
 
