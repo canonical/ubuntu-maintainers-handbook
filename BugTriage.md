@@ -22,6 +22,11 @@ Older issues generally require no triager action if they're progressing
 through their normal workflow. However, the triager should watch for comments
 providing new information that may make the issue more actionable.
 
+## Tooling
+
+For all [triage](Triage.md) input, we use [`startriage`](https://github.com/ubuntu/startriage).
+
+
 ## Types of issue tickets
 
 Items in the triaging queue tend to fall into a few categories, that are
@@ -364,14 +369,3 @@ above, always add an explanatory comment. If reporters disagree with our
 re-triage they will report on the bug and it will show up in the daily triage
 duty the next day to be reconsidered with their point of view taken into
 consideration.
-
-## Tooling
-
-The [ustriage](https://snapcraft.io/ustriage) tool is available as a snap
-and serves as our triage tool. It is maintained publicly on GitHub
-as [ubuntu server triage](https://github.com/canonical/ubuntu-server-triage).
-
-It has options to identify bugs for the triage of the day as well as serving
-as a helper to check our tagged bugs, ensuring that nothing falls through the
-cracks. The README.md of the linked project has more details and use case
-examples.

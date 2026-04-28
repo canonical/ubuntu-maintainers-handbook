@@ -10,6 +10,11 @@ watch more directly. The link
 [migration excuses - server team](https://ubuntu-archive-team.ubuntu.com/proposed-migration/update_excuses_by_team.html#ubuntu-server)
 shows all current cases of our team.
 
+## Tooling
+
+For all [triage](Triage.md) input, we use [`startriage`](https://github.com/ubuntu/startriage).
+
+
 ## Constraints
 
 In this view there will always be a lot of noise (recent cases worked on already,

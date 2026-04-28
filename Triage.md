@@ -1,5 +1,30 @@
 # Triage
 
+## Tooling
+
+We use [`startriage`](https://github.com/ubuntu/startriage) for all triaging.
+It displays multiple sources (Launchpad, Discourse, Github, proposed-migration, ...) for triaging decisions.
+
+```bash
+snap install startriage
+```
+
+For daily triage:
+
+```bash
+startriage triage
+```
+
+For bug housekeeping:
+
+```bash
+startriage todo
+```
+
+
+The tool has many options for filtering and display - please look at its `--help` output or the git repository / readme.
+
+
 ## Triage rotation
 
 According to load we might shift things, but generally every day Tuesday to
@@ -77,23 +102,23 @@ structure to what we always look at in this meeting:
 
 1. Check the `server-todo` tagged bug list:
 
-   1. Get list via `ustriage`:
+   1. Get list via `startriage`:
 
+      configure `savebugs_dir` in [`~/.config/startriage.toml`](https://github.com/ubuntu/startriage/blob/main/startriage/data/defaults.toml)
       ```bash
-      clear; ustriage --no-show-triage --extended --show-tagged --tag server-todo -S savebugs/todo-$(date -I'seconds').yaml -C $(ls -1t savebugs/* | head -n 1)
+      startriage todo
       ```
-      
+
       The list of last week's bugs helps to identify new/closed cases and is
-      [tracked in the helpers repository](https://git.launchpad.net/~ubuntu-server/+git/ubuntu-helpers/tree/savebugs)
+      [tracked in a repository](https://code.launchpad.net/~ubuntu-server/+git/triage-savedbugs)
 
    1. Check size (see min/max above) of the `server-todo` tagged bug list.
    1. Ensure assigned bugs make reasonable progress:
-   
+
       1. Discuss blockers/reasons if there was no progress.
       1. Notice, enjoy and celebrate progress that was made.
 
    1. Ensure unassigned bugs find an owner:
-   
       1. Ensure long term unassigned bugs are re-reevaluated (is there a
          reason why they are not tackled?)
 
