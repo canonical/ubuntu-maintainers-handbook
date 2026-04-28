@@ -6,6 +6,11 @@ This kind of structure gave us better interaction rates and contributions than
 on Discourse, but to make them worthwhile we need to ensure we pick up and act
 on what we get there
 
+## Tooling
+
+For all [triage](Triage.md) input, we use [`startriage`](https://github.com/ubuntu/startriage).
+
+
 ## Lists
 
 For the daily triage rotation you only have to look at those issues or pull

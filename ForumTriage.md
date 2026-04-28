@@ -1,44 +1,11 @@
 # Forum triage
 
-In order to maintain a line of communication with the community, forum
-triage has been added as a task to do during [regular triage](Triage.md).
-
-Historically we used to also have our documentation on discourse, but the
-engagement of experts using server is much better in the [github based](https://github.com/canonical/ubuntu-server-documentation)
-backing [Ubuntu Server docs](https://documentation.ubuntu.com/server).
-Due to that the forum interactions reduced and now are mostly discussions, which are a perfect fit for a forum.
+In order to maintain a line of communication with the community, forum triage has been added as a task to do during [regular triage](Triage.md).
 
 ## Tooling
 
-[Discourse Triage](https://snapcraft.io/dsctriage) (`dsctriage`) is used for
-working with documentation hosted on Discourse. Documentation for the tool is
-located on [GitHub](https://github.com/lvoytek/discourse-triage).
+For all [triage](Triage.md) input, we use [`startriage`](https://github.com/ubuntu/startriage).
 
-`dsctriage` can be installed with:
-
-```bash
-sudo snap install dsctriage
-```
-
-As a part of daily triage, running the base command will show relevant
-comments for the previous day (or over the weekend).
-
-```bash
-dsctriage
-```
-
-To run the previous day's triage, provide the relevant date or previous day of
-the week, such as:
-
-```bash
-dsctriage 2023-04-27
-```
-
-or
-
-```bash
-dsctriage friday
-```
 
 ## Types of updates
 
